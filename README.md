@@ -38,3 +38,13 @@ LTCUSDSHORTS | Open short positions in LTCUSD on Bitfinex
 LTCUSDT | Litecoin / Tether USD
 XLMBTC | Stellar Lumens / Bitcoin
 XLMETH | Stellar Lumens / Ethereum
+
+## Historian Service
+### Installation
+1. Run the database script found in src\CryptoCurrency.HistorianService\create_historian.sql on a MySQL instance
+2. Create a user in MySQL with the following permissions on the schema: CREATE TEMPORARY TABLES, DELETE, EXECUTE, GRANT OPTION, INSERT, LOCK TABLES, SELECT, SHOW VIEW, UPDATE
+3. In src\CryptoCurrency.HistorianService\appsettings.json:
+    * Modify the Historian connection string to point to the above schema you just created
+    * Modify the list of exchanges to get trades from (optional)
+4. Compile the HistorianService project
+5. Run dotnet CryptoCurrency.HistorianService.dll
