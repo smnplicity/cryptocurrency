@@ -1,0 +1,11 @@
+[Oo]bj/
+[Bb]in/
+.nuget/
+packages/
+artifacts/
+*.user
+*.suo
+*.userprefs
+*DS_Store
+*.sln.ide
+*.vs
