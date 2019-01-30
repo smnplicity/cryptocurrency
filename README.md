@@ -3,7 +3,7 @@
 ## Supported Exchanges
 
 Exchange | Https | Web Socket
--------- | ----- | -----------
+-------- | :-----: | :-----------:
 Bitfinex | :heavy_check_mark: | :heavy_check_mark:
 Binance | :heavy_check_mark:
 CoinbasePro | :heavy_check_mark:
