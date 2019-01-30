@@ -46,5 +46,6 @@ XLMETH | Stellar Lumens / Ethereum
 3. In src\CryptoCurrency.HistorianService\appsettings.json:
     * Modify the Historian connection string to point to the above schema you just created
     * Modify the list of exchanges to get trades from (optional)
+         * Note: The required hardware resources increases with every exchange worker that is running
 4. Compile the HistorianService project
 5. Run dotnet CryptoCurrency.HistorianService.dll
