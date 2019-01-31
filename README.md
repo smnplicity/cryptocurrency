@@ -1,4 +1,5 @@
 # cryptocurrency platform
+This platform collects cryptocurrency trades from exchanges and runs ohlc (and a bit more) aggregation on it. The trades and trade aggregation is stored in a MySQL database in a standard structure.
 
 ## Supported Exchanges
 
@@ -39,6 +40,24 @@ LTCUSDT | Litecoin / Tether USD
 XLMBTC | Stellar Lumens / Bitcoin
 XLMETH | Stellar Lumens / Ethereum
 
+## Supported OHLC intervals
+Interval Key | Label
+-------------|----------
+1m | 1 minute
+3m | 3 minutes
+5m | 5 minutes
+15m | 15 minutes
+30m | 30 minutes
+1h | 1 hour
+2h | 2 hours
+3h | 3 hours
+4h | 4 hours
+6h | 6 hours
+12h | 12 hours
+1D | 1 day
+1W | 1 week
+1M | 1 month
+	
 ## Historian Service
 ### Installation
 1. Run the database script found in src\CryptoCurrency.HistorianService\create_historian.sql on a MySQL instance
