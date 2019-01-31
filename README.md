@@ -2,6 +2,7 @@
 
 ## Features
 * Collects cryptocurrency trades from exchanges and runs ohlc (and a bit more) aggregation on it
+	* Including historical trades
 * The trades and trade aggregations are stored in a MySQL database in a standard structure
 * Provides various market indicators such as RSI and MACD
 * Supports private exchange API functionality e.g. placing orders
