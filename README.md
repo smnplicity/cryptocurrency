@@ -1,5 +1,5 @@
 # cryptocurrency platform
-This platform collects cryptocurrency trades from exchanges and runs ohlc (and a bit more) aggregation on it. The trades and trade aggregation is stored in a MySQL database in a standard structure.
+This platform collects cryptocurrency trades from exchanges and runs ohlc (and a bit more) aggregation on it. The trades and trade aggregations are stored in a MySQL database in a standard structure.
 
 ## Supported Exchanges
 
