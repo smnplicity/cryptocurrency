@@ -68,3 +68,14 @@ Interval Key | Label
          * Note: The required hardware resources increases with every exchange worker that is running
 4. Compile the HistorianService project
 5. Run dotnet CryptoCurrency.HistorianService.dll
+
+## Code examples
+
+### MySQL
+Get daily trade aggregate data for Kraken/BTCUSD for January 2019.
+
+Note: Timestamp values are epoch milliseconds.
+
+``` SQL
+select * from `exchange_trade_aggregate` where `exchange_id` = 3 and `symbol_id` = 3 and `interval_key` = '1D' and `timestamp` between 1546300800000 and 1548892800000
+```
