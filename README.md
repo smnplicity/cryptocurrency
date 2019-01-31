@@ -99,7 +99,7 @@ var tradeAggregates = await marketRepository.GetTradeAggregates(ExchangeEnum.Kra
 ### MySQL
 Get daily trade aggregate data for Kraken/BTCUSD for January 2019.
 
-Note: Timestamp values are epoch milliseconds.
+Note: Timestamp values are milliseconds from unix epoch.
 
 ``` SQL
 select * from `exchange_trade_aggregate` where `exchange_id` = 3 and `symbol_id` = 3 and `interval_key` = '1D' and `timestamp` between 1546300800000 and 1548892800000
