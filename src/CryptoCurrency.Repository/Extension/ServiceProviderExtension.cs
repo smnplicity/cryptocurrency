@@ -1,7 +1,9 @@
 ﻿using System;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using CryptoCurrency.Repository.Edm.Historian;
 
@@ -9,16 +11,28 @@ namespace CryptoCurrency.Repository.Extension
 {
     public static class ServiceProviderExtension
     {
-        public static IServiceProvider WarmUpDbContext(this ServiceProvider serviceProvider)
+        public static bool WarmUpDbContext(this ServiceProvider serviceProvider, ILogger logger)
         {
             var historianDbContext = serviceProvider.GetService<IDesignTimeDbContextFactory<HistorianDbContext>>();
 
-            using (var ctx = historianDbContext.CreateDbContext(null))
+            try
             {
-                // Do nothing...
-            }
+                using (var ctx = historianDbContext.CreateDbContext(null))
+                {
+                    var connection = ctx.Database.GetDbConnection();
 
-            return serviceProvider;
+                    connection.Open();
+                    connection.Close();
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                logger.LogCritical(ex, "Unable to warm up db context");
+
+                return false;
+            }
         }
     }
 }

@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using CryptoCurrency.Core;
 using CryptoCurrency.Core.Exchange;
 using CryptoCurrency.Core.Historian;
-using CryptoCurrency.Core.Market;
 using CryptoCurrency.ExchangeClient;
 using CryptoCurrency.HistorianService.Provider;
 using CryptoCurrency.Repository;
@@ -53,9 +52,6 @@ namespace CryptoCurrency.HistorianService
                 .AddTransient<IExchangeTradeStatAggregateWorker, ExchangeTradeStatAggregateWorker>()
                 .AddTransient<IExchangeTradeCatchupWorker, ExchangeTradeCatchupWorker>()
                 .BuildServiceProvider();
-            
-            // Warm up the EF core db contexts . . .
-            serviceProvider.WarmUpDbContext();
 
             var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
             
@@ -66,32 +62,41 @@ namespace CryptoCurrency.HistorianService
             var logger = loggerFactory.CreateLogger("Historian");
 
             logger.LogInformation("Starting service");
-
+                       
             logger.LogInformation($"Connection String: {historianConnectionString}");
+            
+            // Warm up the EF core db contexts . . .
+            var dbContextWarmUpSuccess = serviceProvider.WarmUpDbContext(logger);
 
-            var bootstrapper = serviceProvider.GetService<IRepositoryBootstrapper>();
-
-            var bootstrapSuccess = await bootstrapper.Run(logger);
-
-            var exchangeFactory = serviceProvider.GetService<IExchangeFactory>();
-
-            // Get exchanges that are valid for this instance
-            var allowedExchanges = appConfig.GetSection("ExchangeWorkers").Get<ICollection<string>>();
-
-            if (allowedExchanges.Count > 0)
+            if (dbContextWarmUpSuccess)
             {
-                var filteredExchanges = exchangeFactory.List().Where(ex => allowedExchanges.Contains(ex.Name.ToString())).ToList();
+                var bootstrapper = serviceProvider.GetService<IRepositoryBootstrapper>();
 
-                foreach (var exchange in filteredExchanges)
+                var bootstrapSuccess = await bootstrapper.Run(logger);
+
+                if (bootstrapSuccess)
                 {
-                    var worker = serviceProvider.GetService<IExchangeWorker>();
+                    var exchangeFactory = serviceProvider.GetService<IExchangeFactory>();
 
-                    worker.Start(exchange);
+                    // Get exchanges that are valid for this instance
+                    var allowedExchanges = appConfig.GetSection("ExchangeWorkers").Get<ICollection<string>>();
+
+                    if (allowedExchanges.Count > 0)
+                    {
+                        var filteredExchanges = exchangeFactory.List().Where(ex => allowedExchanges.Contains(ex.Name.ToString())).ToList();
+
+                        foreach (var exchange in filteredExchanges)
+                        {
+                            var worker = serviceProvider.GetService<IExchangeWorker>();
+
+                            worker.Start(exchange);
+                        }
+                    }
+                    else
+                    {
+                        logger.LogWarning($"No exchanges found in the configuration. Check appsettings.json.");
+                    }
                 }
-            }
-            else
-            {
-                logger.LogWarning($"No exchanges found in the configuration. Check appsettings.json.");
             }
 
             Console.CancelKeyPress += (sender, eventArgs) =>
