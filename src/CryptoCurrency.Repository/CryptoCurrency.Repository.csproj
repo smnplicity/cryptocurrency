@@ -10,11 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0-preview.18572.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0-preview.18572.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview.18572.1" />
-    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.13" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.7.0-preview.18571.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.15" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0-preview.19073.11" />
   </ItemGroup>
 
   <ItemGroup>
