@@ -4,10 +4,10 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
 {
     public class BinancePriceTicker
     {
-        [JsonProperty(PropertyName = "symbol")]
+        [JsonProperty("symbol")]
         public string Symbol { get; set; }
 
-        [JsonProperty(PropertyName = "price")]
+        [JsonProperty("price")]
         public double Price { get; set; }
     }
 }

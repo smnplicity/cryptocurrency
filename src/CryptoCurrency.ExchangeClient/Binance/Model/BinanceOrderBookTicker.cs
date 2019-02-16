@@ -4,19 +4,19 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
 {
     public class BinanceOrderBookTicker
     {
-        [JsonProperty(PropertyName = "symbol")]
+        [JsonProperty("symbol")]
         public string Symbol { get; set; }
 
-        [JsonProperty(PropertyName = "bidPrice")]
+        [JsonProperty("bidPrice")]
         public double BidPrice { get; set; }
 
-        [JsonProperty(PropertyName = "bidQty")]
+        [JsonProperty("bidQty")]
         public double BidQty { get; set; }
 
-        [JsonProperty(PropertyName = "askPrice")]
+        [JsonProperty("askPrice")]
         public double AskPrice { get; set; }
 
-        [JsonProperty(PropertyName = "askQty")]
+        [JsonProperty("askQty")]
         public double AskQty { get; set; }
     }
 }

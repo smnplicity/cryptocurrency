@@ -135,7 +135,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                         SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(assets[assetPairs[kvp.Value.Pair].Base].AltName), exchange.GetStandardisedCurrencyCode(assets[assetPairs[kvp.Value.Pair].Quote].AltName)).Code,
                         Id = kvp.Key,
                         OrderId = kvp.Value.OrderTxId,
-                        Created = Epoch.FromSeconds((long)kvp.Value.Time).DateTime,
+                        Created = Epoch.FromSeconds(kvp.Value.Time),
                         Side = exchange.GetOrderSide(kvp.Value.Type),
                         Price = kvp.Value.Price,
                         Fee = kvp.Value.Fee,

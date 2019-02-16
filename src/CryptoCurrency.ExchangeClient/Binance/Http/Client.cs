@@ -4,11 +4,14 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using CryptoCurrency.Core;
+using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange;
 using CryptoCurrency.Core.Exchange.Model;
 using CryptoCurrency.Core.Extensions;
@@ -19,7 +22,6 @@ using CryptoCurrency.Core.RateLimiter;
 using CryptoCurrency.Core.Symbol;
 
 using CryptoCurrency.ExchangeClient.Binance.Model;
-using CryptoCurrency.Core.Currency;
 
 namespace CryptoCurrency.ExchangeClient.Binance.Http
 {
@@ -124,9 +126,19 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             });
         }
 
-        public Task<WrappedResponse<ICollection<TradeItem>>> GetTradeHistory(ISymbol symbol, int pageNumber, int pageSize, string fromTradeId)
+        public async Task<WrappedResponse<ICollection<TradeItem>>> GetTradeHistory(ISymbol symbol, int pageNumber, int pageSize, string fromTradeId)
         {
-            throw new NotImplementedException();
+            var relativeUrl = "v3/myTrades";
+
+            var query = new NameValueCollection();
+            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
+
+            if (!string.IsNullOrEmpty(fromTradeId))
+                query.Add("fromId", fromTradeId);
+
+            query.Add("limit", pageSize.ToString());
+
+            return await InternalRequest<ICollection<BinanceTradeItem>, ICollection<TradeItem>>(true, relativeUrl, HttpMethod.Get, query);
         }
 
         public Task<WrappedResponse<ICollection<OrderItem>>> GetOpenOrders(ISymbol symbol, int pageNumber, int pageSize)
@@ -191,6 +203,18 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
 
         private string PrivateKey { get; set; }
 
+        private string GenerateSignature(string message)
+        {
+            var key = Encoding.UTF8.GetBytes(PrivateKey);
+
+            using (var hmac = new HMACSHA256(key))
+            {
+                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(message));
+
+                return BitConverter.ToString(hash).Replace("-", "");
+            }
+        }
+
         private string ToQueryString(NameValueCollection nvc)
         {
             if (nvc == null)
@@ -209,16 +233,21 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
 
             var url = this.GetFullUrl(relativeUrl);
 
-            string queryString = null;
-
             var headers = new NameValueCollection();
 
             if (authRequired)
             {
+                extraParams.Add("timestamp", Epoch.Now.TimestampMilliseconds.ToString());
+                extraParams.Add("recvWindow", "1000000");
 
+                var signature = GenerateSignature(ToQueryString(extraParams));
+
+                extraParams.Add("signature", signature);
+
+                headers.Add("X-MBX-APIKEY", PublicKey);
             }
-            else
-                queryString = ToQueryString(extraParams);
+            
+            var queryString = ToQueryString(extraParams);
 
             if (queryString != null && method == HttpMethod.Get)
                 url += "?" + queryString;

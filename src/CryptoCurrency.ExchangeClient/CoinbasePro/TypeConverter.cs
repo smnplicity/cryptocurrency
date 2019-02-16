@@ -125,7 +125,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
                     SymbolCode = exchange.DecodeProductId(t.ProductId).Code,
                     Id = t.TradeId,
                     OrderId = t.OrderId,
-                    Created = t.CreatedAt.ToUniversalTime(),
+                    Created = new Epoch(t.CreatedAt.ToUniversalTime()),
                     Side = exchange.GetOrderSide(t.Side),
                     Price = t.Price,
                     Volume = t.Size,

@@ -6,31 +6,34 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
 {
     public class BinanceSymbol
     {
-        [JsonProperty(PropertyName = "symbol")]
+        [JsonProperty("symbol")]
         public string Symbol { get; set; }
 
-        [JsonProperty(PropertyName = "status")]
+        [JsonProperty("status")]
         public string Status { get; set; }
 
-        [JsonProperty(PropertyName = "baseAsset")]
+        [JsonProperty("baseAsset")]
         public string BaseAsset { get; set; }
 
-        [JsonProperty(PropertyName = "baseAssetPrecision")]
+        [JsonProperty("baseAssetPrecision")]
         public int BaseAssetPrecision { get; set; }
 
-        [JsonProperty(PropertyName = "quoteAsset")]
+        [JsonProperty("quoteAsset")]
         public string QuoteAsset { get; set; }
 
-        [JsonProperty(PropertyName = "quoteAssetPrecision")]
+        [JsonProperty("quoteAssetPrecision")]
         public int QuoteAssetPrecision { get; set; }
+
+        [JsonProperty("filters")]
+        public ICollection<Dictionary<string, object>> Filters { get; set; }
     }
 
     public class BinanceInfo
     {
-        [JsonProperty(PropertyName = "timezone")]
+        [JsonProperty("timezone")]
         public string Timezone { get; set; }
 
-        [JsonProperty(PropertyName = "symbols")]
+        [JsonProperty("symbols")]
         public ICollection<BinanceSymbol> Symbols { get; set; }
     }
 }

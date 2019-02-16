@@ -8,6 +8,7 @@ using CryptoCurrency.Core;
 using CryptoCurrency.Core.Exchange.Model;
 using CryptoCurrency.Core.Extensions;
 using CryptoCurrency.Core.Market;
+using CryptoCurrency.Core.OrderSide;
 using CryptoCurrency.Core.Symbol;
 
 using CryptoCurrency.ExchangeClient.Binance.Model;
@@ -104,6 +105,34 @@ namespace CryptoCurrency.ExchangeClient.Binance
                     }).ToList(),
                     Filter = filter
                 };
+            }
+
+            if(typeof(T) == typeof(ICollection<BinanceTradeItem>))
+            {
+                var info = await exchange.GetExchangeInfo();
+
+                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+
+                var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(binanceSymbol.BaseAsset);
+                var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(binanceSymbol.QuoteAsset);
+
+                var symbol = symbolFactory.Get(baseCurrencyCode, quoteCurrencyCode);
+
+                var trades = obj as ICollection<BinanceTradeItem>;
+
+                return (T2)(object)trades.Select(t => new TradeItem
+                {
+                    Exchange = exchange.Name,
+                    SymbolCode = symbol.Code,
+                    Created = Epoch.FromMilliseconds(t.Time),
+                    Id = t.Id.ToString(),
+                    OrderId = t.OrderId.ToString(),
+                    Fee = t.Commission,
+                    FeeCurrencyCode = exchange.GetStandardisedCurrencyCode(t.CommissionAsset),
+                    Price = t.Price,
+                    Volume = t.Quantity,
+                    Side = t.IsBuyer ? OrderSideEnum.Buy : OrderSideEnum.Sell
+                }).ToList();
             }
 
             if (typeof(T) == typeof(T2))

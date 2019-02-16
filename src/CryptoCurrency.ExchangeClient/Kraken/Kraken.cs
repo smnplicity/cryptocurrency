@@ -66,7 +66,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
         public IExchangeWebSocketClient GetWebSocketClient()
         {
-            return null;
+            return new WebSocket.Client(this, SymbolFactory);
         }
 
         #region Custom functionality
