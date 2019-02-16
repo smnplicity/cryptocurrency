@@ -14,6 +14,7 @@
         NEO = 12,
         DASH = 13,
         USDT = 14,
-        XLM = 15
+        XLM = 15,
+        BNB = 16
     }
 }

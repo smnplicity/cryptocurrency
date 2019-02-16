@@ -37,6 +37,7 @@ namespace CryptoCurrency.Core
                 .AddSingleton<ICurrency, Dash>()
                 .AddSingleton<ICurrency, Tether>()
                 .AddSingleton<ICurrency, StellarLumens>()
+                .AddSingleton<ICurrency, BinanceCoin>()
                 .AddSingleton<ICurrencyFactory, CurrencyFactory>();
 
             // Symbol factory
