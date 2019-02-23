@@ -21,7 +21,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
         [JsonProperty("quoteAsset")]
         public string QuoteAsset { get; set; }
 
-        [JsonProperty("quoteAssetPrecision")]
+        [JsonProperty("quotePrecision")]
         public int QuoteAssetPrecision { get; set; }
 
         [JsonProperty("filters")]

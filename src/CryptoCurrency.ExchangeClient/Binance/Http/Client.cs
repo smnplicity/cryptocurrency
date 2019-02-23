@@ -29,16 +29,19 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
     {
         private Binance Exchange { get; set; }
 
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
         public IRateLimiter RateLimiter { get; set; }
 
-        public Client(Binance exchange, ISymbolFactory symbolFactory)
+        public Client(Binance exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
             Exchange = exchange;
+            CurrencyFactory = currencyFactory;
             SymbolFactory = symbolFactory;
 
-            RateLimiter = new CoinbaseProRateLimiter();
+            RateLimiter = new BinanceRateLimiter();
         }
 
         public string ApiUrl => "https://api.binance.com/api/";
@@ -104,9 +107,43 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             throw new NotImplementedException();
         }
 
-        public Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
+        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
         {
-            throw new NotImplementedException();
+            var relativeUrl = "v3/order";
+
+            var query = new NameValueCollection();
+            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
+            query.Add("side", orderSide.ToString().ToUpper());
+            query.Add("type", orderType.ToString().ToUpper());
+            query.Add("quantity", volume.ToString("R"));
+
+            if (orderType == OrderTypeEnum.Limit)
+            {
+                query.Add("price", price.ToString("R"));
+                query.Add("timeInForce", "GTC");
+            }
+
+            return await InternalRequest<BinanceNewOrder, CreateOrder>(true, relativeUrl, HttpMethod.Post, query);
+        }
+
+
+        public async Task<WrappedResponse<CreateOrder>> CreateOrder(string symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
+        {
+            var relativeUrl = "v3/order";
+
+            var query = new NameValueCollection();
+            query.Add("symbol", symbol);
+            query.Add("side", orderSide.ToString().ToUpper());
+            query.Add("type", orderType.ToString().ToUpper());
+            query.Add("quantity", ((decimal)volume).ToString());
+
+            if (orderType == OrderTypeEnum.Limit)
+            {
+                query.Add("price", ((decimal)price).ToString());
+                query.Add("timeInForce", "GTC");
+            }
+
+            return await InternalRequest<BinanceNewOrder, CreateOrder>(true, relativeUrl, HttpMethod.Post, query);
         }
 
         public async Task<WrappedResponse<TradeFee>> GetTradeFee(OrderSideEnum orderSide, ISymbol symbol)
@@ -141,14 +178,40 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             return await InternalRequest<ICollection<BinanceTradeItem>, ICollection<TradeItem>>(true, relativeUrl, HttpMethod.Get, query);
         }
 
-        public Task<WrappedResponse<ICollection<OrderItem>>> GetOpenOrders(ISymbol symbol, int pageNumber, int pageSize)
+        public async Task<WrappedResponse<ICollection<OrderItem>>> GetOpenOrders(ISymbol symbol, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            var relativeUrl = "v3/openOrders";
+
+            var query = new NameValueCollection();
+            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
+
+            return await InternalRequest<ICollection<BinanceOpenOrder>, ICollection<OrderItem>>(true, relativeUrl, HttpMethod.Get, query);
+        }
+
+        public async Task<WrappedResponse<ICollection<OrderItem>>> GetOpenOrders(string symbol, int pageNumber, int pageSize)
+        {
+            var relativeUrl = "v3/openOrders";
+
+            var query = new NameValueCollection();
+            query.Add("symbol", symbol);
+
+            return await InternalRequest<ICollection<BinanceOpenOrder>, ICollection<OrderItem>>(true, relativeUrl, HttpMethod.Get, query);
         }
 
         public Task<WrappedResponse<CancelOrder>> CancelOrder(string[] orderIds)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<WrappedResponse<CancelOrder>> CancelOrder(string symbol, string orderId)
+        {
+            var relativeUrl = "v3/order";
+
+            var query = new NameValueCollection();
+            query.Add("symbol", symbol);
+            query.Add("orderId", orderId);
+
+            return await InternalRequest<BinanceCancelOrder, CancelOrder>(true, relativeUrl, HttpMethod.Delete, query);
         }
 
         public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address)
@@ -238,7 +301,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             if (authRequired)
             {
                 extraParams.Add("timestamp", Epoch.Now.TimestampMilliseconds.ToString());
-                extraParams.Add("recvWindow", "1000000");
+                extraParams.Add("recvWindow", "30000");
 
                 var signature = GenerateSignature(ToQueryString(extraParams));
 
@@ -260,7 +323,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
                     Method = method
                 };
 
-                if (method == HttpMethod.Post && queryString != null)
+                if (method != HttpMethod.Get && queryString != null)
                     request.Content = new StringContent(queryString, Encoding.UTF8, "application/x-www-form-urlencoded");
 
                 request.Headers.Add("User-Agent", "cryptocurrency Client");
@@ -294,7 +357,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
                             return new WrappedResponse<T2>
                             {
                                 StatusCode = WrappedResponseStatusCode.Ok,
-                                Data = await Exchange.ChangeType<T, T2>(SymbolFactory, extraParams, obj)
+                                Data = await Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, extraParams, obj)
                             };
                         }
                         catch (HttpRequestException)

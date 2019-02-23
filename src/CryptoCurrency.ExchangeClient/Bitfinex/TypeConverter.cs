@@ -22,7 +22,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
         {
             if (typeof(T2) == typeof(ICollection<MarketTick>))
             {
-                var ticks = (obj as List<object[]>);
+                var ticks = obj as List<object[]>;
                 
                 return (T2)(object)ticks.Select(t => new MarketTick
                 {
@@ -33,6 +33,23 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
                     SellPrice = Convert.ToDouble(t[3]),
                     LastPrice = Convert.ToDouble(t[7])
                 }).ToList();
+            }
+
+            if (typeof(T2) == typeof(MarketTick))
+            {
+                var tick = obj as object[];
+
+                var symbolCode = (SymbolCodeEnum)Enum.Parse(typeof(SymbolCodeEnum), additionalData["SymbolCode"]);
+
+                return (T2)(object)new MarketTick
+                {
+                    Exchange = exchange.Name,
+                    Epoch = new Epoch(DateTime.UtcNow),
+                    SymbolCode = symbolCode,
+                    BuyPrice = Convert.ToDouble(tick[0]),
+                    SellPrice = Convert.ToDouble(tick[2]),
+                    LastPrice = Convert.ToDouble(tick[6])
+                };
             }
 
             if (typeof(T2) == typeof(TradeResult))
@@ -56,7 +73,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
                         Volume = Math.Abs(Convert.ToDouble(t[2])),
                         Side = Convert.ToDouble(t[2]) > 0 ? OrderSideEnum.Buy : OrderSideEnum.Sell,
                         SourceTradeId = Convert.ToString(t[0])
-                    }).ToList(),
+                    }).OrderBy(t => t.Epoch.TimestampMilliseconds).ThenBy(t => t.SourceTradeId).ToList(),
                     Filter = filter
                 };
             }

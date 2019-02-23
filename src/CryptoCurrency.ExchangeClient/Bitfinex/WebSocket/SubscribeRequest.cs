@@ -2,7 +2,7 @@
 
 namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 {
-    public class TradeRequest
+    public class SubscribeRequest
     {
         [JsonProperty(PropertyName = "event")]
         public string Event { get; set; }

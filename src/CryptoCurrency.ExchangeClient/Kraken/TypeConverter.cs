@@ -20,7 +20,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 {
     public static class TypeConverter
     {
-        public static async Task<T2> ChangeType<T, T2>(this Kraken exchange, ISymbolFactory symbolFactory, NameValueCollection postData, T obj)
+        public static async Task<T2> ChangeType<T, T2>(this Kraken exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory, NameValueCollection postData, T obj)
         {
             if (typeof(T) == typeof(KrakenCancelOrderResult))
             {
@@ -37,7 +37,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 {
                     SymbolCode = symbolFactory.Get(exchange.DecodeAssetPair(kvp.Value.Descr.Pair)[0], exchange.DecodeAssetPair(kvp.Value.Descr.Pair)[1]).Code,
                     Id = kvp.Key,
-                    OrderDateTime = Epoch.FromSeconds((long)kvp.Value.OpenTm).DateTime,
+                    OrderEpoch = Epoch.FromSeconds((long)kvp.Value.OpenTm),
                     Side = exchange.GetOrderSide(kvp.Value.Descr.Type),
                     Type = exchange.GetOrderType(kvp.Value.Descr.OrderType),
                     State = exchange.GetOrderState(kvp.Value.Status),
@@ -57,7 +57,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 {
                     SymbolCode = symbolFactory.Get(exchange.DecodeAssetPair(kvp.Value.Descr.Pair)[0], exchange.DecodeAssetPair(kvp.Value.Descr.Pair)[1]).Code,
                     Id = kvp.Key,
-                    OrderDateTime = Epoch.FromSeconds((long)kvp.Value.OpenTm).DateTime,
+                    OrderEpoch = Epoch.FromSeconds((long)kvp.Value.OpenTm),
                     Side = exchange.GetOrderSide(kvp.Value.Descr.Type),
                     Type = exchange.GetOrderType(kvp.Value.Descr.OrderType),
                     State = exchange.GetOrderState(kvp.Value.Status),
@@ -77,7 +77,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 {
                     SymbolCode = symbolFactory.Get(exchange.DecodeAssetPair(kvp.Value.Descr.Pair)[0], exchange.DecodeAssetPair(kvp.Value.Descr.Pair)[1]).Code,
                     Id = kvp.Key,
-                    OrderDateTime = Epoch.FromSeconds((long)kvp.Value.OpenTm).DateTime,
+                    OrderEpoch = Epoch.FromSeconds((long)kvp.Value.OpenTm),
                     Side = exchange.GetOrderSide(kvp.Value.Descr.Type),
                     Type = exchange.GetOrderType(kvp.Value.Descr.OrderType),
                     State = exchange.GetOrderState(kvp.Value.Status),
@@ -96,7 +96,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 return (T2)(object)new CreateOrder
                 {
                     Id = order.TxId.First(),
-                    OrderTime = DateTime.UtcNow,
+                    OrderEpoch = Epoch.Now,
                     SymbolCode = symbolFactory.Get(exchange.DecodeAssetPair(postData["pair"])[0], exchange.DecodeAssetPair(postData["pair"])[1]).Code,
                     Side = exchange.GetOrderSide(postData["type"]),
                     Type = exchange.GetOrderType(postData["ordertype"]),
@@ -114,7 +114,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
                 return (T2)(object)balance.Select(kvp => new AccountBalance
                 {
-                    CurrencyCode = exchange.GetStandardisedCurrencyCode(assets[kvp.Key].AltName),
+                    CurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, assets[kvp.Key].AltName),
                     Balance = kvp.Value
                 }).ToList();
             }
@@ -132,7 +132,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                     .Select(kvp => new TradeItem
                     {
                         Exchange = exchange.Name,
-                        SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(assets[assetPairs[kvp.Value.Pair].Base].AltName), exchange.GetStandardisedCurrencyCode(assets[assetPairs[kvp.Value.Pair].Quote].AltName)).Code,
+                        SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(currencyFactory, assets[assetPairs[kvp.Value.Pair].Base].AltName), exchange.GetStandardisedCurrencyCode(currencyFactory, assets[assetPairs[kvp.Value.Pair].Quote].AltName)).Code,
                         Id = kvp.Key,
                         OrderId = kvp.Value.OrderTxId,
                         Created = Epoch.FromSeconds(kvp.Value.Time),
@@ -154,7 +154,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 return (T2)(object)new MarketTick
                 {
                     Exchange = exchange.Name,
-                    SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(assets[assetPairs[tick.Key].Base].AltName), exchange.GetStandardisedCurrencyCode(assets[assetPairs[tick.Key].Quote].AltName)).Code,
+                    SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(currencyFactory, assets[assetPairs[tick.Key].Base].AltName), exchange.GetStandardisedCurrencyCode(currencyFactory, assets[assetPairs[tick.Key].Quote].AltName)).Code,
                     Epoch = Epoch.Now,
                     BuyPrice = tick.Value.Ask.First(),
                     SellPrice = tick.Value.Bid.First(),
@@ -173,7 +173,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 return (T2)(object)ticks.Select(kvp => new MarketTick
                 {
                     Exchange = exchange.Name,
-                    SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(assets[assetPairs[kvp.Key].Base].AltName), exchange.GetStandardisedCurrencyCode(assets[assetPairs[kvp.Key].Quote].AltName)).Code,
+                    SymbolCode = symbolFactory.Get(exchange.GetStandardisedCurrencyCode(currencyFactory, assets[assetPairs[kvp.Key].Base].AltName), exchange.GetStandardisedCurrencyCode(currencyFactory, assets[assetPairs[kvp.Key].Quote].AltName)).Code,
                     Epoch = Epoch.Now,
                     BuyPrice = kvp.Value.Ask.First(),
                     SellPrice = kvp.Value.Bid.First(),

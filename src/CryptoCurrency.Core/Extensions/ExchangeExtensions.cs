@@ -19,22 +19,16 @@ namespace CryptoCurrency.Core.Extensions
 
         public static string GetCurrencyCode(this IExchange ex, CurrencyCodeEnum currencyCode)
         {
-            var currency = ex.Currency.Where(c => c.CurrencyCode == currencyCode).FirstOrDefault();
+            var currency = ex.CurrencyConverter.Where(c => c.CurrencyCode == currencyCode).FirstOrDefault();
 
-            if (currency == null)
-                throw new Exception($"Currency code {currencyCode} not supported by exchange {ex.Name}");
-
-            return currency.AltCurrencyCode ?? currency.CurrencyCode.ToString();
+            return currency != null && currency.AltCurrencyCode != null ? currency.AltCurrencyCode : currencyCode.ToString();
         }
 
-        public static CurrencyCodeEnum GetStandardisedCurrencyCode(this IExchange ex, string currencyCode)
+        public static CurrencyCodeEnum GetStandardisedCurrencyCode(this IExchange ex, ICurrencyFactory currencyFactory, string currencyCode)
         {
-            var currency = ex.Currency.Where(c => (string.IsNullOrEmpty(c.AltCurrencyCode) && c.CurrencyCode.ToString() == currencyCode) || c.AltCurrencyCode == currencyCode).FirstOrDefault();
+            var currency = ex.CurrencyConverter.Where(c => c.AltCurrencyCode == currencyCode).FirstOrDefault();
 
-            if (currency == null)
-                throw new Exception($"Currency code {currencyCode} not supported by exchange {ex.Name}");
-
-            return currency.CurrencyCode;
+            return currency != null ? currency.CurrencyCode : currencyFactory.Get(currencyCode).Code;
         }
     }
 }

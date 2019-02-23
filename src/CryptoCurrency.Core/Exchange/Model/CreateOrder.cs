@@ -1,6 +1,4 @@
-﻿using System;
-
-using CryptoCurrency.Core.OrderSide;
+﻿using CryptoCurrency.Core.OrderSide;
 using CryptoCurrency.Core.OrderState;
 using CryptoCurrency.Core.OrderType;
 using CryptoCurrency.Core.Symbol;
@@ -9,9 +7,11 @@ namespace CryptoCurrency.Core.Exchange.Model
 {
     public class CreateOrder
     {
+        public ExchangeEnum Exchange { get; set; }
+
         public SymbolCodeEnum SymbolCode { get; set; }
 
-        public DateTime OrderTime { get; set; }
+        public Epoch OrderEpoch { get; set; }
 
         public string Id { get; set; }
 

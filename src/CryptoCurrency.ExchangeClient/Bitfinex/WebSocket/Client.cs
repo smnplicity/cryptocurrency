@@ -12,6 +12,7 @@ using CryptoCurrency.Core.Symbol;
 using CryptoCurrency.Core.Exchange.Model;
 
 using CloseEventArgs = CryptoCurrency.Core.Exchange.CloseEventArgs;
+using CryptoCurrency.Core.Market;
 
 namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 {
@@ -40,47 +41,36 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 
         public event EventHandler<TradesReceivedEventArgs> OnTradesReceived;
 
+        public event EventHandler<TickerReceivedEventArgs> OnTickerReceived;
+
         public void SetApiAccess(string privateKey, string publicKey, string passphrase)
         {
 
         }
-        
-        public Task Begin()
+
+        public Task Begin() => Task.Run(() =>
         {
-            return Task.Run(() =>
+            if (WebSocketClient != null)
+                throw new Exception("WebSocket already in use");
+
+            Channels = new Dictionary<long, SubscriptionEventResponse>();
+
+            using (WebSocketClient = new WebSocketSharp.WebSocket(Url))
             {
-                if (WebSocketClient != null)
-                    throw new Exception("WebSocket already in use");
+                WebSocketClient.OnOpen += OnOpen;
 
-                Channels = new Dictionary<long, SubscriptionEventResponse>();
+                WebSocketClient.OnMessage += OnMessage;
 
-                using (WebSocketClient = new WebSocketSharp.WebSocket(Url))
+                WebSocketClient.OnClose += delegate (object sender, WebSocketSharp.CloseEventArgs e)
                 {
-                    WebSocketClient.OnOpen += OnOpen;
+                    Channels = new Dictionary<long, SubscriptionEventResponse>();
 
-                    WebSocketClient.OnMessage += OnMessage;
+                    OnClose?.Invoke(sender, new CloseEventArgs { });
+                };
 
-                    WebSocketClient.OnClose += delegate(object sender, WebSocketSharp.CloseEventArgs e)
-                    {
-                        Channels = new Dictionary<long, SubscriptionEventResponse>();
-                        
-                        OnClose?.Invoke(sender, new CloseEventArgs { });
-                    };
-
-                    Connect();
-
-                    Task.Run(() =>
-                    {
-                        while (true)
-                        {
-                            WebSocketClient.Ping();
-
-                            Task.Delay(15000);
-                        }
-                    });
-                }
-            });
-        }
+                Connect();
+            }
+        });
 
         public void Connect()
         {
@@ -90,7 +80,12 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 
         public void BeginListenTrades(ISymbol symbol)
         {
-            WebSocketClient.Send(JsonConvert.SerializeObject(new TradeRequest { Event = "subscribe", Channel = "trades", Symbol = $"t{symbol.Code.ToString()}" }));
+            WebSocketClient.Send(JsonConvert.SerializeObject(new SubscribeRequest { Event = "subscribe", Channel = "trades", Symbol = $"t{symbol.Code.ToString()}" }));
+        }
+
+        public void BeginListenTicker(ISymbol symbol)
+        {
+            WebSocketClient.Send(JsonConvert.SerializeObject(new SubscribeRequest { Event = "subscribe", Channel = "ticker", Symbol = $"t{symbol.Code.ToString()}" }));
         }
 
         #region Private functionality
@@ -115,9 +110,15 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
                             switch (subscription.Channel)
                             {
                                 case "trades":
-                                    var trades = JsonConvert.DeserializeObject<TradeEventResponse>(message);
+                                    var tradeResponse = JsonConvert.DeserializeObject<TradeEventResponse>(message);
 
-                                    Channels.Add(trades.ChanId, trades);
+                                    Channels.Add(tradeResponse.ChanId, tradeResponse);
+
+                                    break;
+                                case "ticker":
+                                    var tickerResponse = JsonConvert.DeserializeObject<TickerEventResponse>(message);
+
+                                    Channels.Add(tickerResponse.ChanId, tickerResponse);
 
                                     break;
                             }
@@ -140,6 +141,10 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
                         {
                             case "trades":
                                 HandleTradeMessage((TradeEventResponse)channel, data);
+
+                                break;
+                            case "ticker":
+                                HandleTickerMessage((TickerEventResponse)channel, data);
 
                                 break;
                         }
@@ -176,7 +181,26 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 
             var result = Exchange.ChangeType<dynamic, TradeResult>(SymbolFactory, raw, null, additionalData);
 
-            OnTradesReceived(this, new TradesReceivedEventArgs { Data = result });
+            OnTradesReceived?.Invoke(this, new TradesReceivedEventArgs { Data = result });
+        }
+
+        private void HandleTickerMessage(TickerEventResponse channel, dynamic data)
+        {
+            if (data[1].GetType() != typeof(JArray))
+                return;
+
+            var raw = (data[1] as JArray).ToObject<object[]>();
+
+            var pair = Exchange.DecodeSymbol(channel.Symbol);
+
+            var symbol = SymbolFactory.Get(pair[0], pair[1]);
+
+            var additionalData = new NameValueCollection();
+            additionalData.Add("SymbolCode", symbol.Code.ToString());
+
+            var result = Exchange.ChangeType<dynamic, MarketTick>(SymbolFactory, raw, null, additionalData);
+
+            OnTickerReceived?.Invoke(this, new TickerReceivedEventArgs { Data = result });
         }
         #endregion
     }

@@ -4,13 +4,13 @@ using CryptoCurrency.Core.RateLimiter;
 
 namespace CryptoCurrency.ExchangeClient.Binance.Http
 {
-    public class CoinbaseProRateLimiter : IRateLimiter
+    public class BinanceRateLimiter : IRateLimiter
     {
         public int Count { get; set; }
 
         private int MaxCount { get; set; }
 
-        public CoinbaseProRateLimiter()
+        public BinanceRateLimiter()
         {
             Count = 0;
 
@@ -23,7 +23,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
         {
             while (true)
             {
-                await Task.Delay(3000);
+                await Task.Delay(2000);
 
                 if (Count > 0)
                     Count--;

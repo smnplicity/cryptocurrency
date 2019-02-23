@@ -15,6 +15,8 @@ namespace CryptoCurrency.Core.Exchange
 
         event EventHandler<TradesReceivedEventArgs> OnTradesReceived;
 
+        event EventHandler<TickerReceivedEventArgs> OnTickerReceived;
+
         void SetApiAccess(string privateKey, string publicKey, string passphrase);
 
         Task Begin();
@@ -22,5 +24,7 @@ namespace CryptoCurrency.Core.Exchange
         void Connect();
 
         void BeginListenTrades(ISymbol symbol);
+
+        void BeginListenTicker(ISymbol symbol);
     }
 }

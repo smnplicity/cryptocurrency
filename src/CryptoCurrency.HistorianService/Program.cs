@@ -79,17 +79,20 @@ namespace CryptoCurrency.HistorianService
                     var exchangeFactory = serviceProvider.GetService<IExchangeFactory>();
 
                     // Get exchanges that are valid for this instance
-                    var allowedExchanges = appConfig.GetSection("ExchangeWorkers").Get<ICollection<string>>();
+                    var allowedExchanges = appConfig.GetSection("ExchangeWorkers").Get<Dictionary<string, ExchangeWorkerConfiguration>>();
 
                     if (allowedExchanges.Count > 0)
                     {
-                        var filteredExchanges = exchangeFactory.List().Where(ex => allowedExchanges.Contains(ex.Name.ToString())).ToList();
+                        var filteredExchanges = exchangeFactory.List().Where(ex => allowedExchanges.Keys.Contains(ex.Name.ToString())).ToList();
 
                         foreach (var exchange in filteredExchanges)
                         {
                             var worker = serviceProvider.GetService<IExchangeWorker>();
 
-                            worker.Start(exchange);
+                            var configuration = allowedExchanges[exchange.Name.ToString()];
+                            configuration.Symbol = configuration.Symbol.Count > 0 ? configuration.Symbol : exchange.Symbol;
+
+                            worker.Start(exchange, configuration);
                         }
                     }
                     else

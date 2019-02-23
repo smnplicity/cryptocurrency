@@ -75,7 +75,7 @@ namespace CryptoCurrency.HistorianService.Worker
 
             using (Logger.BeginExchangeScope(Exchange.Name))
             {
-                if (WebSocketClient != null)
+                if (WebSocketClient != null && exchangeWorker.Configuration.UseWebSocket)
                     BeginReceiveTradesWebSocket();
                 else
                     BeginReceiveTradesHttp();
@@ -87,7 +87,7 @@ namespace CryptoCurrency.HistorianService.Worker
         {
             using (Logger.BeginProtocolScope("Https"))
             {
-                var symbols = Exchange.Symbol.Select(symbolCode => SymbolFactory.Get(symbolCode)).Where(symbol => symbol.Tradable);
+                var symbols = ExchangeWorker.Configuration.Symbol.Select(symbolCode => SymbolFactory.Get(symbolCode)).Where(symbol => symbol.Tradable);
 
                 while (true)
                 {
@@ -145,7 +145,7 @@ namespace CryptoCurrency.HistorianService.Worker
                 {
                     Logger.LogInformation($"Established connection");
 
-                    foreach (var symbolCode in Exchange.Symbol)
+                    foreach (var symbolCode in ExchangeWorker.Configuration.Symbol)
                     {
                         using (Logger.BeginSymbolScope(symbolCode))
                         {

@@ -50,7 +50,7 @@ namespace CryptoCurrency.HistorianService.Worker
         {
             ExchangeWorker = exchangeWorker;
 
-            foreach (var symbolCode in Exchange.Symbol)
+            foreach (var symbolCode in ExchangeWorker.Configuration.Symbol)
             {
                 var symbol = SymbolFactory.Get(symbolCode);
 

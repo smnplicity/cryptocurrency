@@ -4,12 +4,15 @@ using NUnit.Framework;
 
 using CryptoCurrency.Core.Exchange;
 using CryptoCurrency.Core.Symbol;
+using CryptoCurrency.Core.Currency;
 
 namespace CryptoCurrency.ExchangeClient.Tests
 {
     [TestFixture]
     public class BinanceHttpClientTests
     {
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
         private IExchange Exchange { get; set; }
@@ -17,9 +20,10 @@ namespace CryptoCurrency.ExchangeClient.Tests
         [SetUp]
         protected void SetUp()
         {
+            CurrencyFactory = CommonMock.GetCurrencyFactory();
             SymbolFactory = CommonMock.GetSymbolFactory();
 
-            Exchange = new Binance.Binance(SymbolFactory);
+            Exchange = new Binance.Binance(CurrencyFactory, SymbolFactory);
         }
 
         [Test]

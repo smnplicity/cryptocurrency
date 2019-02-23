@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 
 using CryptoCurrency.Core;
+using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange.Model;
 using CryptoCurrency.Core.Extensions;
 using CryptoCurrency.Core.Market;
@@ -16,7 +17,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
 {
     public static class TypeConverter
     {
-        public static T2 ChangeType<T, T2>(this CoinbasePro exchange, ISymbolFactory symbolFactory, object requestData, T obj, long? cbBefore)
+        public static T2 ChangeType<T, T2>(this CoinbasePro exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory, object requestData, T obj, long? cbBefore)
         {
             if (typeof(T) == typeof(CoinbaseProCancelOrder))
                 return (T2)(object)new CancelOrder();
@@ -33,7 +34,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
                     SymbolCode = symbol.Code,
                     Side = exchange.GetOrderSide(order.Side),
                     Type = exchange.GetOrderType(order.Type),
-                    OrderTime = order.CreatedAt.ToUniversalTime(),
+                    OrderEpoch = new Epoch(order.CreatedAt.ToUniversalTime()),
                     Price = order.Price,
                     Volume = order.Size,
                     State = exchange.GetOrderState(order.Status)
@@ -46,7 +47,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
 
                 return (T2)(object)account.Select(a => new AccountBalance
                 {
-                    CurrencyCode = exchange.GetStandardisedCurrencyCode(a.Currency),
+                    CurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, a.Currency),
                     Balance = a.Balance,
                     PendingFunds = a.Hold
                 }).ToList();

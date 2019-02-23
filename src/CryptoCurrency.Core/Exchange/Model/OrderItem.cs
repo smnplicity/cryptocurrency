@@ -10,6 +10,8 @@ namespace CryptoCurrency.Core.Exchange.Model
 {
     public class OrderItem
     {
+        public ExchangeEnum Exchange { get; set; }
+
         public SymbolCodeEnum SymbolCode { get; set; }
 
         public string Id { get; set; }
@@ -32,6 +34,6 @@ namespace CryptoCurrency.Core.Exchange.Model
 
         public double Fee { get; set; }
 
-        public DateTime OrderDateTime { get; set; }
+        public Epoch OrderEpoch { get; set; }
     }
 }

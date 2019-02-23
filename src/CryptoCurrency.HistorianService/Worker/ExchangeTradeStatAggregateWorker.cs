@@ -57,7 +57,7 @@ namespace CryptoCurrency.HistorianService.Worker
             if (Exchange.SupportedStatKeys == null)
                 return;
 
-            foreach (var symbolCode in Exchange.Symbol)
+            foreach (var symbolCode in ExchangeWorker.Configuration.Symbol)
             {
                 var symbol = SymbolFactory.Get(symbolCode);
 

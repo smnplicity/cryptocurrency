@@ -69,7 +69,7 @@ namespace CryptoCurrency.HistorianService.Worker
                             continue;
                         }
 
-                        var symbols = Exchange.Symbol.Select(symbolCode => SymbolFactory.Get(symbolCode)).Where(s => s.Tradable);
+                        var symbols = ExchangeWorker.Configuration.Symbol.Select(symbolCode => SymbolFactory.Get(symbolCode)).Where(s => s.Tradable);
 
                         foreach (var symbol in symbols)
                         {

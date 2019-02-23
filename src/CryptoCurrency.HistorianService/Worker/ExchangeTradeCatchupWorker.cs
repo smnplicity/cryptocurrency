@@ -76,7 +76,7 @@ namespace CryptoCurrency.HistorianService.Worker
 
             Logger.LogInformation("Ensure historical trades are captured.");
 
-            foreach (var symbolCode in Exchange.Symbol)
+            foreach (var symbolCode in ExchangeWorker.Configuration.Symbol)
             {
                 var symbol = SymbolFactory.Get(symbolCode);
                 var lastTradeFilter = await HistorianRepository.GetTradeFilter(Exchange.Name, symbolCode);
@@ -103,7 +103,7 @@ namespace CryptoCurrency.HistorianService.Worker
             {
                 while (true)
                 {
-                    foreach (var symbolCode in Exchange.Symbol)
+                    foreach (var symbolCode in ExchangeWorker.Configuration.Symbol)
                     {
                         using (Logger.BeginSymbolScope(symbolCode))
                         {

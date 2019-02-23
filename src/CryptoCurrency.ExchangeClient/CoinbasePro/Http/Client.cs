@@ -29,13 +29,17 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Http
     {
         private CoinbasePro Exchange { get; set; }
 
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
         public IRateLimiter RateLimiter { get; set; }
 
-        public Client(CoinbasePro exchange, ISymbolFactory symbolFactory)
+        public Client(CoinbasePro exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
             Exchange = exchange;
+            CurrencyFactory = currencyFactory;
+            SymbolFactory = symbolFactory;
 
             RateLimiter = new CoinbaseProRateLimiter();
         }
@@ -263,7 +267,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Http
                             return new WrappedResponse<T2>
                             {
                                 StatusCode = WrappedResponseStatusCode.Ok,
-                                Data = Exchange.ChangeType<T, T2>(SymbolFactory, requestData, obj, cbBefore)
+                                Data = Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, requestData, obj, cbBefore)
                             };
                         }
                         catch (HttpRequestException ex)

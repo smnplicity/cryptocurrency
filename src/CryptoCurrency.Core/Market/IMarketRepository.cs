@@ -10,15 +10,23 @@ namespace CryptoCurrency.Core.Market
 {
     public interface IMarketRepository
     {
+        Task<MarketTick> GetTick(ExchangeEnum exchange, SymbolCodeEnum symbolCode, Epoch at);
+
+        Task<MarketTickAverage> GetTickAverage(ICollection<ExchangeEnum> exchanges, SymbolCodeEnum symbolCode, Epoch at);
+
         Task SaveTrades(IStorageTransaction transaction, ICollection<MarketTrade> trades);
 
-        Task<ICollection<MarketTrade>> GetTrades(ExchangeEnum exchange, SymbolCodeEnum symbolCode, Epoch from, Epoch to);
+        Task<PagedCollection<MarketTrade>> GetTrades(ExchangeEnum exchange, SymbolCodeEnum symbolCode, Epoch from, Epoch to, int? pageSize, int? pageNumber);
 
         Task<ICollection<MarketTrade>> GetNextTrades(ExchangeEnum exchange, SymbolCodeEnum symbolCode, long tradeId, int limit);
+
+        Task<ICollection<MarketTrade>> GetNextTrades(ExchangeEnum exchange, SymbolCodeEnum symbolCode, Epoch from, long tradeId, int limit);
 
         Task SaveTradeAggregates(IStorageTransaction transaction, ExchangeEnum exchange, SymbolCodeEnum symbolCode, ICollection<MarketTrade> trades);
 
         Task<ICollection<MarketAggregate>> GetTradeAggregates(ExchangeEnum exchange, SymbolCodeEnum symbolCode, IntervalKey intervalKey, Epoch from, int dataPoints);
+
+        Task<PagedCollection<MarketAggregate>> GetTradeAggregates(ExchangeEnum exchange, SymbolCodeEnum symbolCode, IntervalKey intervalKey, Epoch from, Epoch to, int? pageSize, int? pageNumber);
 
         Task<ICollection<MarketTradeStat>> GetNextTradeStats(ExchangeEnum exchange, SymbolCodeEnum symbolCode, ExchangeStatsKeyEnum statKey, long tradeStatId, int limit = 1);
 

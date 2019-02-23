@@ -2,6 +2,7 @@
 
 using NUnit.Framework;
 
+using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange;
 using CryptoCurrency.Core.Symbol;
 
@@ -10,6 +11,8 @@ namespace CryptoCurrency.ExchangeClient.Tests
     [TestFixture]
     public class KrakenHttpClientTests
     {
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
         private IExchange Exchange { get; set; }
@@ -17,9 +20,10 @@ namespace CryptoCurrency.ExchangeClient.Tests
         [SetUp]
         protected void SetUp()
         {
+            CurrencyFactory = CommonMock.GetCurrencyFactory();
             SymbolFactory = CommonMock.GetSymbolFactory();
 
-            Exchange = new Kraken.Kraken(SymbolFactory);
+            Exchange = new Kraken.Kraken(CurrencyFactory, SymbolFactory);
         }
 
         [Test]

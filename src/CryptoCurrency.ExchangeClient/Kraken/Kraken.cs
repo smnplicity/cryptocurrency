@@ -17,25 +17,25 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 {
     public class Kraken : IExchange
     {
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
-        public Kraken(ISymbolFactory symbolFactory)
+        public Kraken(ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
+            CurrencyFactory = currencyFactory;
             SymbolFactory = symbolFactory;
         }
 
         public ExchangeEnum Name => ExchangeEnum.Kraken;
 
-        public ICollection<ExchangeCurrency> Currency
+        public ICollection<ExchangeCurrencyConverter> CurrencyConverter
         {
             get
             {
-                return new List<ExchangeCurrency>()
+                return new List<ExchangeCurrencyConverter>()
                 {
-                    new ExchangeCurrency() { CurrencyCode = CurrencyCodeEnum.BTC, Precision = 8, AltCurrencyCode = "XBT" },
-                    new ExchangeCurrency() { CurrencyCode = CurrencyCodeEnum.USD, Precision = 2 },
-                    new ExchangeCurrency() { CurrencyCode = CurrencyCodeEnum.LTC, Precision = 8 },
-                    new ExchangeCurrency() { CurrencyCode = CurrencyCodeEnum.ETH, Precision = 8 }
+                    new ExchangeCurrencyConverter() { CurrencyCode = CurrencyCodeEnum.BTC, AltCurrencyCode = "XBT" }
                 };
             }
         }
@@ -61,12 +61,12 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
         public IExchangeHttpClient GetHttpClient()
         {
-            return new Http.Client(this, SymbolFactory);
+            return new Http.Client(this, CurrencyFactory, SymbolFactory);
         }
 
         public IExchangeWebSocketClient GetWebSocketClient()
         {
-            return new WebSocket.Client(this, SymbolFactory);
+            return new WebSocket.Client(this, CurrencyFactory, SymbolFactory);
         }
 
         #region Custom functionality
@@ -74,8 +74,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken
         {
             return new CurrencyCodeEnum[2]
             {
-                this.GetStandardisedCurrencyCode(pair.Substring(1, 3)),
-                this.GetStandardisedCurrencyCode(pair.Substring(5, 3))
+                this.GetStandardisedCurrencyCode(CurrencyFactory, pair.Substring(1, 3)),
+                this.GetStandardisedCurrencyCode(CurrencyFactory, pair.Substring(5, 3))
             };
         }
 
@@ -83,8 +83,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken
         {
             return new CurrencyCodeEnum[2]
             {
-                this.GetStandardisedCurrencyCode(pair.Substring(0, 3)),
-                this.GetStandardisedCurrencyCode(pair.Substring(3, 3))
+                this.GetStandardisedCurrencyCode(CurrencyFactory, pair.Substring(0, 3)),
+                this.GetStandardisedCurrencyCode(CurrencyFactory, pair.Substring(3, 3))
             };
         }
 

@@ -13,28 +13,19 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
 {
     public class CoinbasePro : IExchange
     {
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
-        public CoinbasePro(ISymbolFactory symbolFactory)
+        public CoinbasePro(ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
+            CurrencyFactory = currencyFactory;
             SymbolFactory = symbolFactory;
         }
 
         public ExchangeEnum Name => ExchangeEnum.CoinbasePro;
 
-        public ICollection<ExchangeCurrency> Currency
-        {
-            get
-            {
-                return new List<ExchangeCurrency>()
-                {
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.BTC, Precision = 8 },
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.ETH, Precision = 8 },
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.LTC, Precision = 8 },
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.USD, Precision = 2 }
-                };
-            }
-        }
+        public ICollection<ExchangeCurrencyConverter> CurrencyConverter => new List<ExchangeCurrencyConverter>();
 
         public ICollection<SymbolCodeEnum> Symbol
         {
@@ -57,7 +48,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
 
         public IExchangeHttpClient GetHttpClient()
         {
-            return new Http.Client(this, SymbolFactory);
+            return new Http.Client(this, CurrencyFactory, SymbolFactory);
         }
 
         public IExchangeWebSocketClient GetWebSocketClient()
@@ -93,8 +84,8 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
 
         public ISymbol DecodeProductId(string productId)
         {
-            var baseCurrencyCode = this.GetStandardisedCurrencyCode(productId.Substring(0, 3));
-            var quoteCurrencyCode = this.GetStandardisedCurrencyCode(productId.Substring(4, 3));
+            var baseCurrencyCode = this.GetStandardisedCurrencyCode(CurrencyFactory, productId.Substring(0, 3));
+            var quoteCurrencyCode = this.GetStandardisedCurrencyCode(CurrencyFactory, productId.Substring(4, 3));
 
             return SymbolFactory.Get(baseCurrencyCode, quoteCurrencyCode);            
         }

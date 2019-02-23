@@ -28,15 +28,15 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
     public class Client : IExchangeHttpClient
     {
         private Kraken Exchange { get; set; }
-
+        private ICurrencyFactory CurrencyFactory { get; set; }
         private ISymbolFactory SymbolFactory { get; set; }
 
         public IRateLimiter RateLimiter { get; set; }
 
-        public Client(Kraken exchange, ISymbolFactory symbolFactory)
+        public Client(Kraken exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
             Exchange = exchange;
-
+            CurrencyFactory = currencyFactory;
             SymbolFactory = symbolFactory;
 
             RateLimiter = new BinanceRateLimiter();
@@ -316,7 +316,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
                                 return new WrappedResponse<T2>
                                 {
                                     StatusCode = WrappedResponseStatusCode.Ok,
-                                    Data = await Exchange.ChangeType<T, T2>(SymbolFactory, extraParams, krakenResponse.Result)
+                                    Data = await Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, extraParams, krakenResponse.Result)
                                 };
                             }
                         }

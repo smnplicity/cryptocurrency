@@ -33,6 +33,8 @@ namespace CryptoCurrency.HistorianService.Worker
 
         public IExchange Exchange { get; set; }
 
+        public ExchangeWorkerConfiguration Configuration { get; set; }
+
         public bool Online { get; set; }
 
         public ExchangeWorker(
@@ -54,11 +56,13 @@ namespace CryptoCurrency.HistorianService.Worker
             TradeStatAggregateWorker = tradeStatAggregateWorker;
         }
 
-        public void Start(IExchange exchange) => Task.Run(async () =>
+        public void Start(IExchange exchange, ExchangeWorkerConfiguration configuration) => Task.Run(async () =>
         {
             var limit = 1000;
             
             Exchange = exchange;
+
+            Configuration = configuration;
 
             Logger = LoggerFactory.CreateLogger($"Historian.{exchange.Name}.Worker");
 

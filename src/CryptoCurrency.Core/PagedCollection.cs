@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CryptoCurrency.Core
 {
@@ -14,7 +15,12 @@ namespace CryptoCurrency.Core
         {
             get
             {
-                return ItemCount / PageSize;
+                if (PageSize == 0 && ItemCount > 0)
+                    return 1;
+
+                var pageCount = ItemCount / (double)PageSize;
+
+                return (int)Math.Ceiling(pageCount);
             }
         }
 

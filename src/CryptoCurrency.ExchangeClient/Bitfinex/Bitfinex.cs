@@ -10,10 +10,13 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
 {
     public class Bitfinex : IExchange
     {
+        private ICurrencyFactory CurrencyFactory { get; set; }
+
         private ISymbolFactory SymbolFactory { get; set; }
 
-        public Bitfinex(ISymbolFactory symbolFactory)
+        public Bitfinex(ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
+            CurrencyFactory = currencyFactory;
             SymbolFactory = symbolFactory;
         }
 
@@ -21,19 +24,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
 
         public ExchangeEnum Name => ExchangeEnum.Bitfinex;
 
-        public ICollection<ExchangeCurrency> Currency
-        {
-            get
-            {
-                return new List<ExchangeCurrency>
-                {
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.BTC, Precision = 5 },
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.ETH, Precision = 5 },
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.LTC, Precision = 5 },
-                    new ExchangeCurrency { CurrencyCode = CurrencyCodeEnum.USD, Precision = 2 }
-                };
-            }
-        }
+        public ICollection<ExchangeCurrencyConverter> CurrencyConverter => new List<ExchangeCurrencyConverter>();
 
         public ICollection<SymbolCodeEnum> Symbol
         {
@@ -79,8 +70,8 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
         {
             return new CurrencyCodeEnum[2]
             {
-                this.GetStandardisedCurrencyCode(symbol.Substring(1, 3)),
-                this.GetStandardisedCurrencyCode(symbol.Substring(4, 3))
+                this.GetStandardisedCurrencyCode(CurrencyFactory, symbol.Substring(1, 3)),
+                this.GetStandardisedCurrencyCode(CurrencyFactory, symbol.Substring(4, 3))
             };
         }
         #endregion
