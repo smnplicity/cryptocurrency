@@ -78,13 +78,13 @@ namespace CryptoCurrency.ExchangeClient.Binance
                 return (T2)(object)ticks;
             }
 
-            if (typeof(T) == typeof(ICollection<BinanceAggTrade>))
+            if (typeof(T2) == typeof(TradeResult))
             {
                 var info = await exchange.GetExchangeInfo();
 
-                var trades = obj as ICollection<BinanceAggTrade>;
+                var trades = obj as ICollection<Dictionary<string, object>>;
 
-                var filter = trades.Count > 0 ? trades.Last().TradeId.ToString() : postData["fromId"];
+                var filter = trades.Count > 0 ? trades.Last()["a"].ToString() : postData["fromId"];
 
                 var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
@@ -100,10 +100,11 @@ namespace CryptoCurrency.ExchangeClient.Binance
                     {
                         Exchange = exchange.Name,
                         SymbolCode = symbol.Code,
-                        Epoch = Epoch.FromMilliseconds(t.Timestamp),
-                        Price = t.Price,
-                        Volume = t.Volume,
-                        SourceTradeId = t.TradeId.ToString()
+                        Epoch = Epoch.FromMilliseconds(Convert.ToInt64(t["T"])),
+                        Price = Convert.ToDouble(t["p"]),
+                        Volume = Convert.ToDouble(t["q"]),
+                        Side = Convert.ToBoolean(t["m"]) ? OrderSideEnum.Sell : OrderSideEnum.Buy,
+                        SourceTradeId = Convert.ToString(t["a"]).ToString()
                     }).ToList(),
                     Filter = filter
                 };
@@ -139,14 +140,14 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if(typeof(T) == typeof(BinanceNewOrder))
             {
-                //var info = await exchange.GetExchangeInfo();
+                var info = await exchange.GetExchangeInfo();
 
-                //var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
-                //var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(binanceSymbol.BaseAsset);
-                //var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(binanceSymbol.QuoteAsset);
+                var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
+                var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
 
-                //var symbol = symbolFactory.Get(baseCurrencyCode, quoteCurrencyCode);
+                var symbol = symbolFactory.Get(baseCurrencyCode, quoteCurrencyCode);
 
                 var newOrder = obj as BinanceNewOrder;
 
@@ -157,7 +158,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
                 return (T2)(object)new CreateOrder
                 {
                     Exchange = exchange.Name,
-                    //SymbolCode = symbol.Code,
+                    SymbolCode = symbol.Code,
                     Id = newOrder.OrderId,
                     Side = exchange.GetOrderSide(newOrder.Side),
                     Type = orderType,
@@ -170,21 +171,21 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if(typeof(T) == typeof(ICollection<BinanceOpenOrder>))
             {
-                //var info = await exchange.GetExchangeInfo();
+                var info = await exchange.GetExchangeInfo();
 
-                //var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
-                //var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(binanceSymbol.BaseAsset);
-                //var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(binanceSymbol.QuoteAsset);
+                var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
+                var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
 
-                //var symbol = symbolFactory.Get(baseCurrencyCode, quoteCurrencyCode);
+                var symbol = symbolFactory.Get(baseCurrencyCode, quoteCurrencyCode);
 
                 var openOrders = obj as ICollection<BinanceOpenOrder>;
 
                 return (T2)(object)openOrders.Select(o => new OrderItem
                 {
                     Exchange = exchange.Name,
-                    //SymbolCode = symbol.Code,
+                    SymbolCode = symbol.Code,
                     Id = o.OrderId,
                     Side = exchange.GetOrderSide(o.Side),
                     Type = exchange.GetOrderType(o.Type),

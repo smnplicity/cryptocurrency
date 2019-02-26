@@ -22,6 +22,10 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 
         private ISymbolFactory SymbolFactory { get; set; }
 
+        private WebSocketSharp.WebSocket WebSocketClient { get; set; }
+
+        private Dictionary<long, SubscriptionEventResponse> Channels { get; set; }
+
         public Client(Bitfinex ex, ISymbolFactory symbolFactory)
         {
             Exchange = ex;
@@ -31,9 +35,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 
         public string Url => "wss://api.bitfinex.com/ws/2";
 
-        private WebSocketSharp.WebSocket WebSocketClient { get; set; }
-
-        private Dictionary<long, SubscriptionEventResponse> Channels { get; set; }
+        public bool IsSubscribeModel => true;
 
         public event EventHandler OnOpen;
 
@@ -55,21 +57,19 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
 
             Channels = new Dictionary<long, SubscriptionEventResponse>();
 
-            using (WebSocketClient = new WebSocketSharp.WebSocket(Url))
+            WebSocketClient = new WebSocketSharp.WebSocket(Url);
+            WebSocketClient.OnOpen += OnOpen;
+
+            WebSocketClient.OnMessage += OnMessage;
+
+            WebSocketClient.OnClose += delegate (object sender, WebSocketSharp.CloseEventArgs e)
             {
-                WebSocketClient.OnOpen += OnOpen;
+                Channels = new Dictionary<long, SubscriptionEventResponse>();
 
-                WebSocketClient.OnMessage += OnMessage;
+                OnClose?.Invoke(sender, new CloseEventArgs { });
+            };
 
-                WebSocketClient.OnClose += delegate (object sender, WebSocketSharp.CloseEventArgs e)
-                {
-                    Channels = new Dictionary<long, SubscriptionEventResponse>();
-
-                    OnClose?.Invoke(sender, new CloseEventArgs { });
-                };
-
-                Connect();
-            }
+            Connect();
         });
 
         public void Connect()
@@ -78,14 +78,16 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.WebSocket
                 WebSocketClient.Connect();
         }
 
-        public void BeginListenTrades(ISymbol symbol)
+        public void BeginListenTrades(ICollection<ISymbol> symbols)
         {
-            WebSocketClient.Send(JsonConvert.SerializeObject(new SubscribeRequest { Event = "subscribe", Channel = "trades", Symbol = $"t{symbol.Code.ToString()}" }));
+            foreach (var symbol in symbols)
+                WebSocketClient.Send(JsonConvert.SerializeObject(new SubscribeRequest { Event = "subscribe", Channel = "trades", Symbol = $"t{symbol.Code.ToString()}" }));
         }
 
-        public void BeginListenTicker(ISymbol symbol)
+        public void BeginListenTicker(ICollection<ISymbol> symbols)
         {
-            WebSocketClient.Send(JsonConvert.SerializeObject(new SubscribeRequest { Event = "subscribe", Channel = "ticker", Symbol = $"t{symbol.Code.ToString()}" }));
+            foreach (var symbol in symbols)
+                WebSocketClient.Send(JsonConvert.SerializeObject(new SubscribeRequest { Event = "subscribe", Channel = "ticker", Symbol = $"t{symbol.Code.ToString()}" }));
         }
 
         #region Private functionality

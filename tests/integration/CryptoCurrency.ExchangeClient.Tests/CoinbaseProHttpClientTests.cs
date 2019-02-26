@@ -33,7 +33,7 @@ namespace CryptoCurrency.ExchangeClient.Tests
             {
                 var symbol = SymbolFactory.Get(symbolCode);
 
-                await CommonExchangeClientTests.HttpGetTradeRequestIsValid(Exchange, symbol);
+                await ExchangeHttpClientTests.HttpGetTradeRequestIsValid(Exchange, symbol);
             }
         }
     }

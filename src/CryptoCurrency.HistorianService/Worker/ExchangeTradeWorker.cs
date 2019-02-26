@@ -137,6 +137,8 @@ namespace CryptoCurrency.HistorianService.Worker
         {
             ExchangeTradeCatchupWorker.Start(ExchangeWorker, Limit);
 
+            var symbols = ExchangeWorker.Configuration.Symbol.Select(s => SymbolFactory.Get(s)).ToList();
+
             using (Logger.BeginProtocolScope("Web Socket"))
             {
                 Logger.LogInformation($"Establishing connection");
@@ -145,17 +147,10 @@ namespace CryptoCurrency.HistorianService.Worker
                 {
                     Logger.LogInformation($"Established connection");
 
-                    foreach (var symbolCode in ExchangeWorker.Configuration.Symbol)
-                    {
-                        using (Logger.BeginSymbolScope(symbolCode))
-                        {
-                            var symbol = SymbolFactory.Get(symbolCode);
+                    Logger.LogInformation($"Begin listening for trades");
 
-                            Logger.LogInformation($"Begin listening for trades");
-
-                            WebSocketClient.BeginListenTrades(symbol);
-                        }
-                    }
+                    if(WebSocketClient.IsSubscribeModel)
+                        WebSocketClient.BeginListenTrades(symbols);
                 };
 
                 WebSocketClient.OnClose += delegate (object sender, CloseEventArgs e)
@@ -186,6 +181,9 @@ namespace CryptoCurrency.HistorianService.Worker
                 };
 
                 WebSocketClient.Begin();
+
+                if (!WebSocketClient.IsSubscribeModel)
+                    WebSocketClient.BeginListenTrades(symbols);
             }
         });
 

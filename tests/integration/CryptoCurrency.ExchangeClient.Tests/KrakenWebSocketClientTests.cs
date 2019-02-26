@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange;
@@ -9,13 +7,15 @@ using CryptoCurrency.Core.Symbol;
 namespace CryptoCurrency.ExchangeClient.Tests
 {
     [TestFixture]
-    public class KrakenHttpClientTests
+    public class KrakenWebSocketClientTests
     {
         private ICurrencyFactory CurrencyFactory { get; set; }
 
         private ISymbolFactory SymbolFactory { get; set; }
 
         private IExchange Exchange { get; set; }
+
+        private ExchangeWebSocketClientTests WebSocketTest { get; set; }
 
         [SetUp]
         protected void SetUp()
@@ -24,17 +24,16 @@ namespace CryptoCurrency.ExchangeClient.Tests
             SymbolFactory = CommonMock.GetSymbolFactory();
 
             Exchange = new Kraken.Kraken(CurrencyFactory, SymbolFactory);
+
+            WebSocketTest = new ExchangeWebSocketClientTests(Exchange);
         }
 
         [Test]
-        public async Task GetTradesRequestIsValid()
+        public void CanReceiveTrades()
         {
-            foreach (var symbolCode in Exchange.Symbol)
-            {
-                var symbol = SymbolFactory.Get(symbolCode);
+            var symbol = SymbolFactory.Get(CurrencyCodeEnum.BTC, CurrencyCodeEnum.USD);
 
-                await ExchangeHttpClientTests.HttpGetTradeRequestIsValid(Exchange, symbol);
-            }
+            WebSocketTest.CanReceiveTrades(symbol);
         }
     }
 }

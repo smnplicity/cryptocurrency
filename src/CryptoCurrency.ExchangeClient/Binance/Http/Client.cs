@@ -252,7 +252,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             if (limit != 0)
                 query.Add("limit", limit.ToString());
 
-            return await InternalRequest<ICollection<BinanceAggTrade>, TradeResult>(false, relativeUrl, HttpMethod.Get, query);
+            return await InternalRequest<ICollection<Dictionary<string, object>>, TradeResult>(false, relativeUrl, HttpMethod.Get, query);
         }
 
 

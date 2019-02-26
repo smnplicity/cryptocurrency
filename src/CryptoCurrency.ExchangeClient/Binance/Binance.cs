@@ -477,7 +477,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
         public IExchangeWebSocketClient GetWebSocketClient()
         {
-            return null;
+            return new WebSocket.Client(this, CurrencyFactory, SymbolFactory);
         }
 
         #region Custom functionality

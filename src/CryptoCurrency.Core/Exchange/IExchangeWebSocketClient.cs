@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using CryptoCurrency.Core.Symbol;
@@ -8,6 +9,8 @@ namespace CryptoCurrency.Core.Exchange
     public interface IExchangeWebSocketClient
     {
         string Url { get; }
+
+        bool IsSubscribeModel { get; }
 
         event EventHandler OnOpen;
 
@@ -23,8 +26,8 @@ namespace CryptoCurrency.Core.Exchange
 
         void Connect();
 
-        void BeginListenTrades(ISymbol symbol);
+        void BeginListenTrades(ICollection<ISymbol> symbols);
 
-        void BeginListenTicker(ISymbol symbol);
+        void BeginListenTicker(ICollection<ISymbol> symbols);
     }
 }

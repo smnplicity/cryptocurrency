@@ -8,7 +8,7 @@ using CryptoCurrency.Core.Symbol;
 
 namespace CryptoCurrency.ExchangeClient.Tests
 {
-    public class CommonExchangeClientTests
+    public class ExchangeHttpClientTests
     {
         [TestMethod]
         public static async Task HttpGetTradeRequestIsValid(IExchange exchange, ISymbol symbol)

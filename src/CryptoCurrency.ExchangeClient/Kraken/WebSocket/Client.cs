@@ -27,6 +27,10 @@ namespace CryptoCurrency.ExchangeClient.Kraken.WebSocket
         private ICurrencyFactory CurrencyFactory { get; set; }
         private ISymbolFactory SymbolFactory { get; set; }
 
+        private WebSocketSharp.WebSocket WebSocketClient { get; set; }
+
+        private Dictionary<long, SubscriptionEventResponse> Channels { get; set; }
+
         public Client(Kraken ex, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory)
         {
             Exchange = ex;
@@ -34,11 +38,9 @@ namespace CryptoCurrency.ExchangeClient.Kraken.WebSocket
             SymbolFactory = symbolFactory;
         }
 
-        private WebSocketSharp.WebSocket WebSocketClient { get; set; }
-
-        private Dictionary<long, SubscriptionEventResponse> Channels { get; set; }
-
         public string Url => "wss://ws.kraken.com";
+
+        public bool IsSubscribeModel => true;
 
         public event EventHandler OnOpen;
         public event EventHandler<CloseEventArgs> OnClose;
@@ -52,21 +54,20 @@ namespace CryptoCurrency.ExchangeClient.Kraken.WebSocket
 
             Channels = new Dictionary<long, SubscriptionEventResponse>();
 
-            using (WebSocketClient = new WebSocketSharp.WebSocket(Url))
+            WebSocketClient = new WebSocketSharp.WebSocket(Url);
+
+            WebSocketClient.OnOpen += OnOpen;
+
+            WebSocketClient.OnMessage += OnMessage;
+
+            WebSocketClient.OnClose += delegate (object sender, WebSocketSharp.CloseEventArgs e)
             {
-                WebSocketClient.OnOpen += OnOpen;
+                Channels = new Dictionary<long, SubscriptionEventResponse>();
 
-                WebSocketClient.OnMessage += OnMessage;
+                OnClose?.Invoke(sender, new CloseEventArgs { });
+            };
 
-                WebSocketClient.OnClose += delegate (object sender, WebSocketSharp.CloseEventArgs e)
-                {
-                    Channels = new Dictionary<long, SubscriptionEventResponse>();
-
-                    OnClose?.Invoke(sender, new CloseEventArgs { });
-                };
-
-                Connect();
-            }
+            Connect();
         });
 
         public void Connect()
@@ -75,19 +76,24 @@ namespace CryptoCurrency.ExchangeClient.Kraken.WebSocket
                 WebSocketClient.Connect();
         }
 
-        public void BeginListenTicker(ISymbol symbol)
+        public void BeginListenTicker(ICollection<ISymbol> symbols)
         {
             throw new NotImplementedException();
         }
 
-        public void BeginListenTrades(ISymbol symbol)
+        public void BeginListenTrades(ICollection<ISymbol> symbols)
         {
-            var baseCurrency = Exchange.GetCurrencyCode(symbol.BaseCurrencyCode);
-            var quoteCurrency = Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode);
+            var pairs = new List<string>();
 
-            var pair = $"{baseCurrency}/{quoteCurrency}";
+            foreach (var symbol in symbols)
+            {
+                var baseCurrency = Exchange.GetCurrencyCode(symbol.BaseCurrencyCode);
+                var quoteCurrency = Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode);
 
-            WebSocketClient.Send(JsonConvert.SerializeObject(new SubscriptionRequest { Event = "subscribe", Pair = new string[] { pair }, Subscription = new BaseEventInnerRequest { Name = "trade" } }));
+                pairs.Add($"{baseCurrency}/{quoteCurrency}");
+            }
+
+            WebSocketClient.Send(JsonConvert.SerializeObject(new SubscriptionRequest { Event = "subscribe", Pair = pairs, Subscription = new BaseEventInnerRequest { Name = "trade" } }));
         }
         
         public void SetApiAccess(string privateKey, string publicKey, string passphrase)
