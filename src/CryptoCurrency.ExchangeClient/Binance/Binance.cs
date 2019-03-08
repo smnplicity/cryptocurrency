@@ -469,7 +469,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
         public ICollection<ExchangeStatsKeyEnum> SupportedStatKeys => null;
 
         public bool SupportsHistoricalLoad => true;
-
+        
         public IExchangeHttpClient GetHttpClient()
         {
             return new Http.Client(this, CurrencyFactory, SymbolFactory);
@@ -480,15 +480,21 @@ namespace CryptoCurrency.ExchangeClient.Binance
             return new WebSocket.Client(this, CurrencyFactory, SymbolFactory);
         }
 
-        #region Custom functionality
-        private BinanceInfo Info { get; set; }
+        public bool Initialized { get; private set; }
 
-        public async Task<BinanceInfo> GetExchangeInfo()
+        public async Task Initialize()
         {
-            if (Info == null)
-                Info = await HttpProxy.GetJson<BinanceInfo>(GetHttpClient().GetFullUrl("v1/exchangeInfo"), null);
-  
-            return Info;
+            Info = await HttpProxy.GetJson<BinanceInfo>(GetHttpClient().GetFullUrl("v1/exchangeInfo"), null);
+
+            Initialized = true;
+        }
+
+        #region Custom functionality
+        public BinanceInfo Info { get; private set; }
+
+        public string GetSymbol(ISymbol symbol)
+        {
+            return $"{this.GetCurrencyCode(symbol.BaseCurrencyCode)}{this.GetCurrencyCode(symbol.QuoteCurrencyCode)}";
         }
 
         public OrderSideEnum GetOrderSide(string side)

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CryptoCurrency.Core.Exchange
 {
     public interface IExchangeFactory
     {
-        IExchange Get(ExchangeEnum exchange);
+        Task<IExchange> Get(ExchangeEnum exchange);
 
         ICollection<IExchange> List();
     }

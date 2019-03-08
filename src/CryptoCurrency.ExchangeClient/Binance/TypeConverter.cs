@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Threading.Tasks;
 
 using CryptoCurrency.Core;
 using CryptoCurrency.Core.Currency;
@@ -19,19 +18,17 @@ namespace CryptoCurrency.ExchangeClient.Binance
 {
     public static class TypeConverter
     {
-        public static async Task<T2> ChangeType<T, T2>(this Binance exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory, NameValueCollection postData, T obj)
+        public static T2 ChangeType<T, T2>(this Binance exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory, NameValueCollection postData, T obj)
         {
             if (typeof(T) == typeof(ICollection<BinancePriceTicker>))
             {
-                var info = await exchange.GetExchangeInfo();
-
                 var ticks = new List<MarketTick>();
 
                 var priceTicks = obj as ICollection<BinancePriceTicker>;
 
                 foreach(var tick in priceTicks)
                 {
-                    var binanceSymbol = info.Symbols.Where(x => x.Symbol == tick.Symbol).FirstOrDefault();
+                    var binanceSymbol = exchange.Info.Symbols.Where(x => x.Symbol == tick.Symbol).FirstOrDefault();
 
                     var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
                     var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
@@ -51,15 +48,13 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if (typeof(T) == typeof(ICollection<BinanceOrderBookTicker>))
             {
-                var info = await exchange.GetExchangeInfo();
-
                 var ticks = new List<MarketTick>();
 
                 var bookTicks = (obj as ICollection<BinanceOrderBookTicker>);
 
                 foreach(var tick in bookTicks)
                 {
-                    var binanceSymbol = info.Symbols.Where(x => x.Symbol == tick.Symbol).FirstOrDefault();
+                    var binanceSymbol = exchange.Info.Symbols.Where(x => x.Symbol == tick.Symbol).FirstOrDefault();
 
                     var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
                     var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
@@ -80,13 +75,11 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if (typeof(T2) == typeof(TradeResult))
             {
-                var info = await exchange.GetExchangeInfo();
-
                 var trades = obj as ICollection<Dictionary<string, object>>;
 
                 var filter = trades.Count > 0 ? trades.Last()["a"].ToString() : postData["fromId"];
 
-                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+                var binanceSymbol = exchange.Info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
                 var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
                 var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
@@ -104,7 +97,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
                         Price = Convert.ToDouble(t["p"]),
                         Volume = Convert.ToDouble(t["q"]),
                         Side = Convert.ToBoolean(t["m"]) ? OrderSideEnum.Sell : OrderSideEnum.Buy,
-                        SourceTradeId = Convert.ToString(t["a"]).ToString()
+                        SourceTradeId = Convert.ToString(t["a"])
                     }).ToList(),
                     Filter = filter
                 };
@@ -112,9 +105,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if(typeof(T) == typeof(ICollection<BinanceTradeItem>))
             {
-                var info = await exchange.GetExchangeInfo();
-
-                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+                var binanceSymbol = exchange.Info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
                 var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
                 var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
@@ -140,9 +131,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if(typeof(T) == typeof(BinanceNewOrder))
             {
-                var info = await exchange.GetExchangeInfo();
-
-                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+                var binanceSymbol = exchange.Info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
                 var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
                 var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);
@@ -171,9 +160,7 @@ namespace CryptoCurrency.ExchangeClient.Binance
 
             if(typeof(T) == typeof(ICollection<BinanceOpenOrder>))
             {
-                var info = await exchange.GetExchangeInfo();
-
-                var binanceSymbol = info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
+                var binanceSymbol = exchange.Info.Symbols.Where(x => x.Symbol == postData["symbol"]).FirstOrDefault();
 
                 var baseCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.BaseAsset);
                 var quoteCurrencyCode = exchange.GetStandardisedCurrencyCode(currencyFactory, binanceSymbol.QuoteAsset);

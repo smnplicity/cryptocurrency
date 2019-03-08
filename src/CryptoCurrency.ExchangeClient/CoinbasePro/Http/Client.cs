@@ -50,7 +50,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Http
 
         public string InitialTradeFilter => "100";
         
-        public async Task<WrappedResponse<CancelOrder>> CancelOrder(string[] orderIds)
+        public async Task<WrappedResponse<CancelOrder>> CancelOrder(ISymbol symbol, string[] orderIds)
         {
             var relativeUrl = $"/orders/{orderIds.First()}";
 

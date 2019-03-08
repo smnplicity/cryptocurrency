@@ -37,7 +37,7 @@ namespace CryptoCurrency.Core.Exchange
 
         Task<WrappedResponse<ICollection<OrderItem>>> GetOpenOrders(ISymbol symbol, int pageNumber, int pageSize);
 
-        Task<WrappedResponse<CancelOrder>> CancelOrder(string[] orderIds);
+        Task<WrappedResponse<CancelOrder>> CancelOrder(ISymbol symbol, string[] orderIds);
 
         Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address);
 

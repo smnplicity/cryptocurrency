@@ -59,6 +59,13 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
         public bool SupportsHistoricalLoad => true;
 
+        public bool Initialized { get; private set; }
+
+        public Task Initialize() => Task.Run(() =>
+        {
+            Initialized = true;
+        });
+
         public IExchangeHttpClient GetHttpClient()
         {
             return new Http.Client(this, CurrencyFactory, SymbolFactory);

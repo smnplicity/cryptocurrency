@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange;
 using CryptoCurrency.Core.Exchange.Model;
@@ -54,6 +54,13 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
         }
 
         public bool SupportsHistoricalLoad => true;
+
+        public bool Initialized { get; private set; }
+
+        public Task Initialize() => Task.Run(() =>
+        {
+            Initialized = true;
+        });
 
         public IExchangeHttpClient GetHttpClient()
         {

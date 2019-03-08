@@ -48,7 +48,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
 
         public string InitialTradeFilter => "0";
 
-        public async Task<WrappedResponse<CancelOrder>> CancelOrder(string[] orderIds)
+        public async Task<WrappedResponse<CancelOrder>> CancelOrder(ISymbol symbol, string[] orderIds)
         {
             var relativeUrl = "CancelOrder";
 
@@ -69,8 +69,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
             nvc.Add("type", orderSide == OrderSideEnum.Buy ? "buy" : "sell");
             nvc.Add("ordertype", orderType == OrderTypeEnum.Market ? "market" : "limit");
             if (orderType == OrderTypeEnum.Limit)
-                nvc.Add("price", Convert.ToString(price));
-            nvc.Add("volume", Convert.ToString(volume));
+                nvc.Add("price", ((decimal)price).ToString());
+            nvc.Add("volume", ((decimal)volume).ToString());
 
             return await InternalRequest<KrakenAddOrderResult, CreateOrder>(true, relativeUrl, HttpMethod.Post, nvc);
         }

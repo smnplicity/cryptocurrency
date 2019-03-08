@@ -113,7 +113,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.WebSocket
 
                     OnTradesReceived?.Invoke(null, new TradesReceivedEventArgs
                     {
-                        Data = await Exchange.ChangeType<ICollection<Dictionary<string, object>>, TradeResult>(CurrencyFactory, SymbolFactory, postData, new[] { tradeAggMessage.Data })
+                        Data = Exchange.ChangeType<ICollection<Dictionary<string, object>>, TradeResult>(CurrencyFactory, SymbolFactory, postData, new[] { tradeAggMessage.Data })
                     });
 
                     break;

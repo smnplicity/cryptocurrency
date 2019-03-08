@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange;
@@ -45,6 +46,13 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro
         public ICollection<ExchangeStatsKeyEnum> SupportedStatKeys => null;
 
         public bool SupportsHistoricalLoad => true;
+
+        public bool Initialized { get; private set; }
+
+        public Task Initialize() => Task.Run(() =>
+        {
+            Initialized = true;
+        });
 
         public IExchangeHttpClient GetHttpClient()
         {

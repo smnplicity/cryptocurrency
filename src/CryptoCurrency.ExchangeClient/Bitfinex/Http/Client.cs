@@ -112,7 +112,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
             throw new NotImplementedException();
         }
 
-        public Task<WrappedResponse<CancelOrder>> CancelOrder(string[] orderIds)
+        public Task<WrappedResponse<CancelOrder>> CancelOrder(ISymbol symbol, string[] orderIds)
         {
             throw new NotImplementedException();
         }

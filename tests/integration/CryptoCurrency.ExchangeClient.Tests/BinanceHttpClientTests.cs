@@ -18,12 +18,14 @@ namespace CryptoCurrency.ExchangeClient.Tests
         private IExchange Exchange { get; set; }
 
         [SetUp]
-        protected void SetUp()
+        protected async Task SetUp()
         {
             CurrencyFactory = CommonMock.GetCurrencyFactory();
             SymbolFactory = CommonMock.GetSymbolFactory();
 
             Exchange = new Binance.Binance(CurrencyFactory, SymbolFactory);
+
+            await Exchange.Initialize();
         }
 
         [Test]

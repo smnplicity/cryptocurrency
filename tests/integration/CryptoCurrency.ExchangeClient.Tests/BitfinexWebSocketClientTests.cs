@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Threading.Tasks;
+
+using NUnit.Framework;
 
 using CryptoCurrency.Core.Currency;
 using CryptoCurrency.Core.Exchange;
@@ -18,12 +20,14 @@ namespace CryptoCurrency.ExchangeClient.Tests
         private ExchangeWebSocketClientTests WebSocketTest { get; set; }
 
         [SetUp]
-        protected void SetUp()
+        protected async Task SetUp()
         {
             CurrencyFactory = CommonMock.GetCurrencyFactory();
             SymbolFactory = CommonMock.GetSymbolFactory();
 
             Exchange = new Bitfinex.Bitfinex(CurrencyFactory, SymbolFactory);
+
+            await Exchange.Initialize();
 
             WebSocketTest = new ExchangeWebSocketClientTests(Exchange);
         }

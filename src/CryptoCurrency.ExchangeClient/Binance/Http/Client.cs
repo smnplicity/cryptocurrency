@@ -112,27 +112,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             var relativeUrl = "v3/order";
 
             var query = new NameValueCollection();
-            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
-            query.Add("side", orderSide.ToString().ToUpper());
-            query.Add("type", orderType.ToString().ToUpper());
-            query.Add("quantity", volume.ToString("R"));
-
-            if (orderType == OrderTypeEnum.Limit)
-            {
-                query.Add("price", price.ToString("R"));
-                query.Add("timeInForce", "GTC");
-            }
-
-            return await InternalRequest<BinanceNewOrder, CreateOrder>(true, relativeUrl, HttpMethod.Post, query);
-        }
-
-
-        public async Task<WrappedResponse<CreateOrder>> CreateOrder(string symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
-        {
-            var relativeUrl = "v3/order";
-
-            var query = new NameValueCollection();
-            query.Add("symbol", symbol);
+            query.Add("symbol", Exchange.GetSymbol(symbol));
             query.Add("side", orderSide.ToString().ToUpper());
             query.Add("type", orderType.ToString().ToUpper());
             query.Add("quantity", ((decimal)volume).ToString());
@@ -168,7 +148,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             var relativeUrl = "v3/myTrades";
 
             var query = new NameValueCollection();
-            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
+            query.Add("symbol", Exchange.GetSymbol(symbol));
 
             if (!string.IsNullOrEmpty(fromTradeId))
                 query.Add("fromId", fromTradeId);
@@ -183,33 +163,18 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             var relativeUrl = "v3/openOrders";
 
             var query = new NameValueCollection();
-            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
+            query.Add("symbol", Exchange.GetSymbol(symbol));
 
             return await InternalRequest<ICollection<BinanceOpenOrder>, ICollection<OrderItem>>(true, relativeUrl, HttpMethod.Get, query);
         }
 
-        public async Task<WrappedResponse<ICollection<OrderItem>>> GetOpenOrders(string symbol, int pageNumber, int pageSize)
-        {
-            var relativeUrl = "v3/openOrders";
-
-            var query = new NameValueCollection();
-            query.Add("symbol", symbol);
-
-            return await InternalRequest<ICollection<BinanceOpenOrder>, ICollection<OrderItem>>(true, relativeUrl, HttpMethod.Get, query);
-        }
-
-        public Task<WrappedResponse<CancelOrder>> CancelOrder(string[] orderIds)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<WrappedResponse<CancelOrder>> CancelOrder(string symbol, string orderId)
+        public async Task<WrappedResponse<CancelOrder>> CancelOrder(ISymbol symbol, string[] orderIds)
         {
             var relativeUrl = "v3/order";
 
             var query = new NameValueCollection();
-            query.Add("symbol", symbol);
-            query.Add("orderId", orderId);
+            query.Add("symbol", Exchange.GetSymbol(symbol));
+            query.Add("orderId", orderIds.First());
 
             return await InternalRequest<BinanceCancelOrder, CancelOrder>(true, relativeUrl, HttpMethod.Delete, query);
         }
@@ -234,7 +199,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             var relativeUrl = "v1/aggTrades";
 
             var query = new NameValueCollection();
-            query.Add("symbol", $"{Exchange.GetCurrencyCode(symbol.BaseCurrencyCode)}{Exchange.GetCurrencyCode(symbol.QuoteCurrencyCode)}");
+            query.Add("symbol", Exchange.GetSymbol(symbol));
 
             if (filter != null)
             {
@@ -357,7 +322,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
                             return new WrappedResponse<T2>
                             {
                                 StatusCode = WrappedResponseStatusCode.Ok,
-                                Data = await Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, extraParams, obj)
+                                Data = Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, extraParams, obj)
                             };
                         }
                         catch (HttpRequestException)
