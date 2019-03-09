@@ -6,5 +6,5 @@ dist: xenial
 script:
     - dotnet restore
     - dotnet build
-    - dotnet test tests\unit\CryptoCurrency.Core.Tests\CryptoCurrency.Core.Tests.csproj
-    - dotnet test tests\integration\CryptoCurrency.ExchangeClient.Tests\CryptoCurrency.ExchangeClient.Tests.csproj
+    - dotnet test tests/unit/CryptoCurrency.Core.Tests/CryptoCurrency.Core.Tests.csproj
+    - dotnet test tests/integration/CryptoCurrency.ExchangeClient.Tests/CryptoCurrency.ExchangeClient.Tests.csproj
