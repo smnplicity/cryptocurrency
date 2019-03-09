@@ -38,7 +38,7 @@ namespace CryptoCurrency.Core.Tests
 
             IntervalFactory = new IntervalFactory(groups);
 
-            var marketAggregates = JsonConvert.DeserializeObject<ICollection<MarketAggregate>>(File.ReadAllText("Data\\marketaggregate.json"));
+            var marketAggregates = JsonConvert.DeserializeObject<ICollection<MarketAggregate>>(File.ReadAllText(Path.Combine("Data", "marketaggregate.json")));
 
             MarketRepository = new Mock<IMarketRepository>();
 
