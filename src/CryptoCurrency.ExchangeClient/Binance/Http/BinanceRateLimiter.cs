@@ -14,7 +14,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
         {
             Count = 0;
 
-            MaxCount = 20;
+            MaxCount = 3;
 
             FillBucket();
         }
@@ -23,7 +23,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
         {
             while (true)
             {
-                await Task.Delay(2000);
+                await Task.Delay(1000);
 
                 if (Count > 0)
                     Count--;

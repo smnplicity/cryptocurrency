@@ -58,7 +58,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
             return await InternalRequest<KrakenCancelOrderResult, CancelOrder>(true, relativeUrl, HttpMethod.Post, nvc);
         }
 
-        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
+        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, decimal price, decimal volume)
         {
             Exchange.EnsureSymbol(symbol);
 
@@ -69,8 +69,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
             nvc.Add("type", orderSide == OrderSideEnum.Buy ? "buy" : "sell");
             nvc.Add("ordertype", orderType == OrderTypeEnum.Market ? "market" : "limit");
             if (orderType == OrderTypeEnum.Limit)
-                nvc.Add("price", ((decimal)price).ToString());
-            nvc.Add("volume", ((decimal)volume).ToString());
+                nvc.Add("price", price.ToString());
+            nvc.Add("volume", volume.ToString());
 
             return await InternalRequest<KrakenAddOrderResult, CreateOrder>(true, relativeUrl, HttpMethod.Post, nvc);
         }
@@ -127,7 +127,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
             return await InternalRequest<KrakenTradeVolume, TradeFee>(true, relativeUrl, HttpMethod.Post, nvc);
         }
 
-        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address)
+        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, decimal withdrawalFee, decimal volume, string address)
         {
             throw new NotImplementedException();
         }
@@ -316,7 +316,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Http
                                 return new WrappedResponse<T2>
                                 {
                                     StatusCode = WrappedResponseStatusCode.Ok,
-                                    Data = await Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, extraParams, krakenResponse.Result)
+                                    Data = Exchange.ChangeType<T, T2>(CurrencyFactory, SymbolFactory, extraParams, krakenResponse.Result)
                                 };
                             }
                         }

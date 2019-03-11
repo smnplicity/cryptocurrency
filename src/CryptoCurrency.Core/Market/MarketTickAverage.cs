@@ -11,11 +11,11 @@ namespace CryptoCurrency.Core.Market
 
         public Epoch Epoch { get; set; }
 
-        public double BuyPrice { get; set; }
+        public decimal BuyPrice { get; set; }
 
-        public double SellPrice { get; set; }
+        public decimal SellPrice { get; set; }
 
-        public double LastPrice { get; set; }
+        public decimal LastPrice { get; set; }
 
         public ICollection<ExchangeEnum> Exchanges { get; set; }
     }

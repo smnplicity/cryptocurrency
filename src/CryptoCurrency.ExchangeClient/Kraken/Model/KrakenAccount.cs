@@ -2,7 +2,7 @@
 
 namespace CryptoCurrency.ExchangeClient.Kraken.Model
 {
-    public class KrakenAccount : Dictionary<string, double>
+    public class KrakenAccount : Dictionary<string, decimal>
     {
     }
 }

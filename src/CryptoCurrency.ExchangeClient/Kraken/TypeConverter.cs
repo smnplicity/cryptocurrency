@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Threading.Tasks;
 
 using CryptoCurrency.Core;
 using CryptoCurrency.Core.Currency;
@@ -20,7 +19,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 {
     public static class TypeConverter
     {
-        public static async Task<T2> ChangeType<T, T2>(this Kraken exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory, NameValueCollection postData, T obj)
+        public static T2 ChangeType<T, T2>(this Kraken exchange, ICurrencyFactory currencyFactory, ISymbolFactory symbolFactory, NameValueCollection postData, T obj)
         {
             if (typeof(T) == typeof(KrakenCancelOrderResult))
             {
@@ -100,8 +99,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                     SymbolCode = symbolFactory.Get(exchange.DecodeAssetPair(postData["pair"])[0], exchange.DecodeAssetPair(postData["pair"])[1]).Code,
                     Side = exchange.GetOrderSide(postData["type"]),
                     Type = exchange.GetOrderType(postData["ordertype"]),
-                    Price = Convert.ToDouble(postData["price"]),
-                    Volume = Convert.ToDouble(postData["volume"]),
+                    Price = Convert.ToDecimal(postData["price"]),
+                    Volume = Convert.ToDecimal(postData["volume"]),
                     State = OrderStateEnum.Pending
                 };
             }
@@ -110,7 +109,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken
             {
                 var balance = obj as KrakenAccount;
 
-                var assets = await exchange.GetAssets();
+                var assets = exchange.Assets;
 
                 return (T2)(object)balance.Select(kvp => new AccountBalance
                 {
@@ -121,9 +120,9 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
             if (typeof(T) == typeof(KrakenTradeHistory))
             {
-                var assets = await exchange.GetAssets();
+                var assets = exchange.Assets;
 
-                var assetPairs = await exchange.GetAssetPairs();
+                var assetPairs = exchange.AssetPairs;
 
                 var trades = obj as KrakenTradeHistory;
 
@@ -145,9 +144,9 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
             if (typeof(T) == typeof(KrakenTick))
             {
-                var assets = await exchange.GetAssets();
+                var assets = exchange.Assets;
 
-                var assetPairs = await exchange.GetAssetPairs();
+                var assetPairs = exchange.AssetPairs;
 
                 var tick = (obj as KrakenTick).First();
 
@@ -164,9 +163,9 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
             if (typeof(T) == typeof(KrakenTicks))
             {
-                var assets = await exchange.GetAssets();
+                var assets = exchange.Assets;
 
-                var assetPairs = await exchange.GetAssetPairs();
+                var assetPairs = exchange.AssetPairs;
 
                 var ticks = obj as KrakenTicks;
 
@@ -218,8 +217,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                 return (T2)(object)new TradeFee
                 {
                     CurrencyCode = CurrencyCodeEnum.USD,
-                    Taker = takerFee / 100.0,
-                    Maker = (tradeVol.FeesMaker != null && tradeVol.FeesMaker.Count > 0 ? tradeVol.FeesMaker.First().Value.Fee : takerFee) / 100.0
+                    Taker = takerFee / 100.0m,
+                    Maker = (tradeVol.FeesMaker != null && tradeVol.FeesMaker.Count > 0 ? tradeVol.FeesMaker.First().Value.Fee : takerFee) / 100.0m
                 };
             }
 
@@ -241,8 +240,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken
                         Exchange = exchange.Name,
                         SymbolCode = symbol.Code,
                         Epoch = Epoch.FromSeconds(Convert.ToDouble(t[2])),
-                        Price = Convert.ToDouble(t[0]),
-                        Volume = Convert.ToDouble(t[1]),
+                        Price = Convert.ToDecimal(t[0]),
+                        Volume = Convert.ToDecimal(t[1]),
                         Side = Convert.ToString(t[3]) == "b" ? OrderSideEnum.Buy : OrderSideEnum.Sell
                     }).ToList()
                 };

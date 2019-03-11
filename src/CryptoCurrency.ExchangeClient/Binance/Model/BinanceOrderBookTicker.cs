@@ -8,15 +8,15 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
         public string Symbol { get; set; }
 
         [JsonProperty("bidPrice")]
-        public double BidPrice { get; set; }
+        public decimal BidPrice { get; set; }
 
         [JsonProperty("bidQty")]
-        public double BidQty { get; set; }
+        public decimal BidQty { get; set; }
 
         [JsonProperty("askPrice")]
-        public double AskPrice { get; set; }
+        public decimal AskPrice { get; set; }
 
         [JsonProperty("askQty")]
-        public double AskQty { get; set; }
+        public decimal AskQty { get; set; }
     }
 }

@@ -18,31 +18,31 @@ namespace CryptoCurrency.Repository.Edm.Historian
         public long Timestamp { get; set; }
 
         [Column("open")]
-        public double Open { get; set; }
+        public decimal Open { get; set; }
 
         [Column("open_timestamp")]
         public long OpenTimestamp { get; set; }
 
         [Column("high")]
-        public double High { get; set; }
+        public decimal High { get; set; }
         
         [Column("low")]
-        public double Low { get; set; }
+        public decimal Low { get; set; }
 
         [Column("close")]
-        public double Close { get; set; }
+        public decimal Close { get; set; }
 
         [Column("close_timestamp")]
         public long CloseTimestamp { get; set; }
 
         [Column("buy_volume")]
-        public double? BuyVolume { get; set; }
+        public decimal? BuyVolume { get; set; }
 
         [Column("sell_volume")]
-        public double? SellVolume { get; set; }
+        public decimal? SellVolume { get; set; }
 
         [Column("total_volume")]
-        public double TotalVolume { get; set; }
+        public decimal TotalVolume { get; set; }
 
         [Column("buy_count")]
         public int? BuyCount { get; set; }

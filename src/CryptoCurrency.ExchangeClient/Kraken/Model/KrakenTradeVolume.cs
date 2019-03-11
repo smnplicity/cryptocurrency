@@ -7,7 +7,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Model
     public class KrakenTradeFee
     {
         [JsonProperty(PropertyName = "fee")]
-        public double Fee { get; set; }
+        public decimal Fee { get; set; }
     }
 
     public class KrakenTradeVolume
@@ -16,7 +16,7 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Model
         public string Currency { get; set; }
 
         [JsonProperty(PropertyName = "volume")]
-        public double Volume { get; set; }
+        public decimal Volume { get; set; }
 
         [JsonProperty(PropertyName = "fees")]
         public Dictionary<string, KrakenTradeFee> Fees { get; set; }

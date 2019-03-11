@@ -47,7 +47,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
 
         public bool MultiTickSupported => true;
 
-        public string InitialTradeFilter => "1491004800000";
+        public string InitialTradeFilter => "0";
 
         public void SetApiAccess(string privateKey, string publicKey, string passphrase)
         {
@@ -57,12 +57,6 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
 
         public Task<WrappedResponse<ICollection<AccountBalance>>> GetBalance()
         {
-            //var relativeUrl = "v2/auth/r/wallets";
-
-            //var response = InternalRequest<ICollection<Bit>(true, relativeUrl, HttpMethod.Post, null);
-
-            //return null;
-
             throw new NotImplementedException();
         }
 
@@ -81,8 +75,8 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
                     Data = new TradeFee
                     {
                         CurrencyCode = symbol.QuoteCurrencyCode,
-                        Maker = 0.002,
-                        Taker = 0.002
+                        Maker = 0.002m,
+                        Taker = 0.002m
                     }
                 };
             });
@@ -97,7 +91,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
             return await InternalRequest<ICollection<object[]>, ICollection<MarketTick>>(false, relativeUrl, HttpMethod.Get, null, null);
         }
 
-        public Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
+        public Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, decimal price, decimal volume)
         {
             throw new NotImplementedException();
         }
@@ -117,7 +111,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
             throw new NotImplementedException();
         }
 
-        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address)
+        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, decimal withdrawalFee, decimal volume, string address)
         {
             throw new NotImplementedException();
         }

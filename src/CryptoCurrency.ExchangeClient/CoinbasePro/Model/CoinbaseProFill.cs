@@ -13,10 +13,10 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
         public string ProductId { get; set; }
 
         [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty(PropertyName = "size")]
-        public double Size { get; set; }
+        public decimal Size { get; set; }
 
         [JsonProperty(PropertyName = "order_id")]
         public string OrderId { get; set; }
@@ -25,7 +25,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
         public DateTime CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "fee")]
-        public double Fee { get; set; }
+        public decimal Fee { get; set; }
 
         [JsonProperty(PropertyName = "settled")]
         public bool Settled { get; set; }

@@ -7,9 +7,9 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
     public class CoinbaseProOrderBook
     {
         [JsonProperty(PropertyName = "bids")]
-        public ICollection<ICollection<double>> Bids { get; set; }
+        public ICollection<ICollection<decimal>> Bids { get; set; }
 
         [JsonProperty(PropertyName = "asks")]
-        public ICollection<ICollection<double>> Asks { get; set; }
+        public ICollection<ICollection<decimal>> Asks { get; set; }
     }
 }

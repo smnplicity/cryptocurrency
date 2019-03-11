@@ -57,7 +57,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Http
             return await InternalRequest<CoinbaseProCancelOrder, CancelOrder>(true, relativeUrl, HttpMethod.Delete, null);
         }
 
-        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
+        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, decimal price, decimal volume)
         {
             var relativeUrl = "/orders";
 
@@ -133,8 +133,8 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Http
                     Data = new TradeFee
                     {
                         CurrencyCode = symbol.QuoteCurrencyCode,
-                        Taker = 0.003,
-                        Maker = 0.0
+                        Taker = 0.003m,
+                        Maker = 0.0m
                     }
                 };
             });
@@ -154,7 +154,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Http
             Passphrase = passphrase;
         }
 
-        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address)
+        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, decimal withdrawalFee, decimal volume, string address)
         {
             throw new NotImplementedException();
         }

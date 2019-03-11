@@ -6,8 +6,8 @@ namespace CryptoCurrency.Core.Exchange.Model
     {
         public CurrencyCodeEnum CurrencyCode { get; set; }
 
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
 
-        public double PendingFunds { get; set; }
+        public decimal PendingFunds { get; set; }
     }
 }

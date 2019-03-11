@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `cryptocurrency_historian` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE  IF NOT EXISTS `cryptocurrency_historian` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE=utf8_bin  */;
 USE `cryptocurrency_historian`;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -7,7 +7,7 @@ USE `cryptocurrency_historian`;
 /*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */; 
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
@@ -26,7 +26,7 @@ CREATE TABLE `currency` (
   `label` varchar(128) NULL,
   PRIMARY KEY (`currency_id`),
   UNIQUE KEY `currency_uix` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `exchange` (
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`exchange_id`),
   UNIQUE KEY `exchange_uix` (`exchange_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -58,7 +58,7 @@ CREATE TABLE `exchange_symbol` (
   KEY `exchange_symbol_fk2_ix` (`symbol_id`),
   CONSTRAINT `exchange_symbol_fk1` FOREIGN KEY (`exchange_id`) REFERENCES `exchange` (`exchange_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `exchange_symbol_fk2` FOREIGN KEY (`symbol_id`) REFERENCES `symbol` (`symbol_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,14 +74,14 @@ CREATE TABLE `exchange_trade` (
   `timestamp` bigint(20) NOT NULL,
   `trade_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `order_side_id` int(11) DEFAULT NULL,
-  `price` double NOT NULL,
-  `volume` double NOT NULL,
+  `price` decimal(32,16) NOT NULL,
+  `volume` decimal(32,16) NOT NULL,
   `source_trade_id` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`trade_id`,`exchange_id`,`symbol_id`,`timestamp`),
   UNIQUE KEY `exchange_trade_uix` (`exchange_id`,`symbol_id`,`source_trade_id`),
   KEY `exchange_trade_ix_1` (`exchange_id`,`symbol_id`,`timestamp`),
   KEY `exchange_trade_ix_2` (`timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,21 +96,21 @@ CREATE TABLE `exchange_trade_aggregate` (
   `symbol_id` int(11) NOT NULL,
   `interval_key` varchar(8) NOT NULL,
   `timestamp` bigint(20) NOT NULL,
-  `open` double DEFAULT NULL,
+  `open` decimal(32,16) DEFAULT NULL,
   `open_timestamp` bigint(20) DEFAULT NULL,
-  `high` double DEFAULT NULL,
-  `low` double DEFAULT NULL,
-  `close` double DEFAULT NULL,
+  `high` decimal(32,16) DEFAULT NULL,
+  `low` decimal(32,16) DEFAULT NULL,
+  `close` decimal(32,16) DEFAULT NULL,
   `close_timestamp` bigint(20) DEFAULT NULL,
-  `buy_volume` double DEFAULT NULL,
-  `sell_volume` double DEFAULT NULL,
-  `total_volume` double DEFAULT NULL,
+  `buy_volume` decimal(32,16) DEFAULT NULL,
+  `sell_volume` decimal(32,16) DEFAULT NULL,
+  `total_volume` decimal(32,16) DEFAULT NULL,
   `buy_count` int(11) DEFAULT NULL,
   `sell_count` int(11) DEFAULT NULL,
   `total_count` int(11) DEFAULT NULL,
   PRIMARY KEY (`exchange_id`,`symbol_id`,`timestamp`,`interval_key`),
   KEY `exchange_trade_aggregate_ix1` (`symbol_id`,`interval_key`,`timestamp`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,10 +126,10 @@ CREATE TABLE `exchange_trade_stat` (
   `stat_key_id` int(11) NOT NULL,
   `timestamp` bigint(20) NOT NULL,
   `trade_stat_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `value` double NOT NULL,
+  `value` decimal(32,16) NOT NULL,
   PRIMARY KEY (`trade_stat_id`,`exchange_id`,`symbol_id`,`stat_key_id`,`timestamp`),
   UNIQUE KEY `exchange_trade_stats_uix` (`exchange_id`,`symbol_id`,`stat_key_id`,`timestamp`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,7 +146,7 @@ CREATE TABLE `historian_exchange_symbol` (
   `last_trade_id` bigint(20) DEFAULT '0',
   `last_trade_stat_id` bigint(20) DEFAULT '0',
   PRIMARY KEY (`exchange_id`,`symbol_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,7 +170,7 @@ CREATE TABLE `historian_log` (
   KEY `historian_log_ix_2` (`category`,`exchange_id`,`symbol_id`),
   KEY `historian_log_ix_3` (`category`,`timestamp`),
   KEY `historian_log_ix_1` (`exchange_id`,`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -189,7 +189,7 @@ CREATE TABLE `historian_trade_catchup` (
   `priority` int(11) NOT NULL,
   PRIMARY KEY (`exchange_id`,`symbol_id`,`trade_filter`(255)),
   CONSTRAINT `historian_trade_catchup_fk1` FOREIGN KEY (`exchange_id`, `symbol_id`) REFERENCES `historian_exchange_symbol` (`exchange_id`, `symbol_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -200,12 +200,12 @@ DROP TABLE IF EXISTS `interval`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `interval` (
-  `interval_key` varchar(8) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `interval_key` varchar(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `from_timestamp` bigint(20) NOT NULL,
   `to_timestamp` bigint(20) NOT NULL,
   PRIMARY KEY (`interval_key`,`from_timestamp`,`to_timestamp`),
   KEY `IX_interval_1` (`from_timestamp`,`to_timestamp`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,7 +220,7 @@ CREATE TABLE `interval_key` (
   `interval_group_id` int(11) NOT NULL,
   `label` varchar(64) NOT NULL,
   PRIMARY KEY (`interval_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +234,7 @@ CREATE TABLE `order_side` (
   `order_side_id` int(11) NOT NULL,
   `label` varchar(16) NOT NULL,
   PRIMARY KEY (`order_side_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -256,7 +256,7 @@ CREATE TABLE `symbol` (
   KEY `symbol_fk2_ix` (`quote_currency_id`),
   CONSTRAINT `symbol_fk1` FOREIGN KEY (`base_currency_id`) REFERENCES `currency` (`currency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `symbol_fk2` FOREIGN KEY (`quote_currency_id`) REFERENCES `currency` (`currency_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_cs;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

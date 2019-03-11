@@ -20,19 +20,19 @@ namespace CryptoCurrency.Core.Exchange.Model
 
         public OrderTypeEnum Type { get; set; }
 
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
-        public double AvgPrice { get; set; }
+        public decimal AvgPrice { get; set; }
 
         public OrderStateEnum State { get; set; }
 
-        public double Volume { get; set; }
+        public decimal Volume { get; set; }
 
-        public double RemainingVolume { get; set; }
+        public decimal RemainingVolume { get; set; }
 
         public CurrencyCodeEnum FeeCurrencyCode { get; set; }
 
-        public double Fee { get; set; }
+        public decimal Fee { get; set; }
 
         public Epoch OrderEpoch { get; set; }
     }

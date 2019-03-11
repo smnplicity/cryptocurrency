@@ -2,11 +2,11 @@
 {
     public class MarketAggregate : Ohlc
     {
-        public double? BuyVolume { get; set; }
+        public decimal? BuyVolume { get; set; }
 
-        public double? SellVolume { get; set; }
+        public decimal? SellVolume { get; set; }
 
-        public double? TotalVolume { get; set; }
+        public decimal? TotalVolume { get; set; }
 
         public int? BuyCount { get; set; }
 

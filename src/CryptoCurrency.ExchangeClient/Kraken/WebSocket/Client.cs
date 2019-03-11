@@ -184,8 +184,8 @@ namespace CryptoCurrency.ExchangeClient.Kraken.WebSocket
                 Exchange = Exchange.Name,
                 SymbolCode = symbol.Code,
                 Epoch = Epoch.FromSeconds(Convert.ToDouble(t[2])),
-                Price = Convert.ToDouble(t[0]),
-                Volume = Convert.ToDouble(t[1]),
+                Price = Convert.ToDecimal(t[0]),
+                Volume = Convert.ToDecimal(t[1]),
                 Side = (string)t[3] == "b" ? OrderSideEnum.Buy : OrderSideEnum.Sell
             }).ToList();
 

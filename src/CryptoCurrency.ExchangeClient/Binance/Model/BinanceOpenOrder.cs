@@ -14,16 +14,16 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
         public string ClientOrderId { get; set; }
         
         [JsonProperty("price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty("origQty")]
-        public double OriginalQuantity { get; set; }
+        public decimal OriginalQuantity { get; set; }
 
         [JsonProperty("executedQty")]
-        public double ExecutedQuantity { get; set; }
+        public decimal ExecutedQuantity { get; set; }
 
         [JsonProperty("cummulativeQuoteQty")]
-        public double CumulativeQuoteQuantity { get; set; }
+        public decimal CumulativeQuoteQuantity { get; set; }
 
         [JsonProperty("status")]
         public string Status { get; set; }

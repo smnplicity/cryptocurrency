@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CryptoCurrency.Core.MarketIndicator.Model
+﻿namespace CryptoCurrency.Core.MarketIndicator.Model
 {
     public class MovingAverageDataPoint : IndicatorDataPoint
     {

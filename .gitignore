@@ -9,3 +9,4 @@ artifacts/
 *DS_Store
 *.sln.ide
 *.vs
+src/CryptoCurrency.HistorianService/appsettings.json

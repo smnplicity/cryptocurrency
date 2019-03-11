@@ -87,6 +87,8 @@ namespace CryptoCurrency.HistorianService
 
                         foreach (var exchange in filteredExchanges)
                         {
+                            await exchange.Initialize();
+
                             var worker = serviceProvider.GetService<IExchangeWorker>();
 
                             var configuration = allowedExchanges[exchange.Name.ToString()];

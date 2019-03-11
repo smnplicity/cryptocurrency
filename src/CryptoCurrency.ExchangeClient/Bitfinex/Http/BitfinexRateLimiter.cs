@@ -14,7 +14,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
         {
             Count = 0;
 
-            MaxCount = 5;
+            MaxCount = 3;
 
             FillBucket();
         }
@@ -23,7 +23,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex.Http
         {
             while (true)
             {
-                await Task.Delay(3000);
+                await Task.Delay(4000);
 
                 if (Count > 0)
                     Count--;

@@ -21,6 +21,6 @@ namespace CryptoCurrency.Repository.Edm.Historian
         public long TradeStatId { get; set; }
 
         [Column("value")]
-        public double Value { get; set; }
+        public decimal Value { get; set; }
     }
 }

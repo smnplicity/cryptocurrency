@@ -7,10 +7,10 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
     public class CoinbaseProCreateOrderRequest
     {
         [JsonProperty(PropertyName = "size")]
-        public double Size { get; set; }
+        public decimal Size { get; set; }
 
         [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty(PropertyName = "side")]
         public string Side { get; set; }
@@ -28,10 +28,10 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
         public string Id { get; set; }
 
         [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty(PropertyName = "size")]
-        public double Size { get; set; }
+        public decimal Size { get; set; }
 
         [JsonProperty(PropertyName = "product_id")]
         public string ProductId { get; set; }
@@ -46,7 +46,7 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
         public DateTime CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "fill_fees")]
-        public double FillFees { get; set; }
+        public decimal FillFees { get; set; }
 
         [JsonProperty(PropertyName = "status")]
         public string Status { get; set; }

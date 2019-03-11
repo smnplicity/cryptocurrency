@@ -21,9 +21,9 @@ namespace CryptoCurrency.Repository.Edm.Historian
         public int? OrderSideId { get; set; }
         
         [Column("price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [Column("volume")]
-        public double Volume { get; set; }
+        public decimal Volume { get; set; }
     }
 }

@@ -8,10 +8,10 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
         public long TradeId { get; set; }
 
         [JsonProperty(PropertyName = "p")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty(PropertyName = "q")]
-        public double Volume { get; set; }
+        public decimal Volume { get; set; }
 
         [JsonProperty(PropertyName = "T")]
         public long Timestamp { get; set; }

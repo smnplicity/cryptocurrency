@@ -14,9 +14,9 @@ namespace CryptoCurrency.Core.Market
 
         public long TradeId { get; set; }
 
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
-        public double Volume { get; set; }
+        public decimal Volume { get; set; }
 
         public OrderSideEnum? Side { get; set; }
 

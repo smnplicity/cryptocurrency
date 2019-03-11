@@ -13,10 +13,10 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
         public long TradeId { get; set; }
 
         [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty(PropertyName = "size")]
-        public double Size { get; set; }
+        public decimal Size { get; set; }
 
         [JsonProperty(PropertyName = "side")]
         public string Side { get; set; }

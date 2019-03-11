@@ -107,7 +107,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             throw new NotImplementedException();
         }
 
-        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume)
+        public async Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, decimal price, decimal volume)
         {
             var relativeUrl = "v3/order";
 
@@ -115,11 +115,11 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             query.Add("symbol", Exchange.GetSymbol(symbol));
             query.Add("side", orderSide.ToString().ToUpper());
             query.Add("type", orderType.ToString().ToUpper());
-            query.Add("quantity", ((decimal)volume).ToString());
+            query.Add("quantity", volume.ToString());
 
             if (orderType == OrderTypeEnum.Limit)
             {
-                query.Add("price", ((decimal)price).ToString());
+                query.Add("price", price.ToString());
                 query.Add("timeInForce", "GTC");
             }
 
@@ -136,8 +136,8 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
                     Data = new TradeFee
                     {
                         CurrencyCode = orderSide == OrderSideEnum.Buy ? symbol.BaseCurrencyCode : symbol.QuoteCurrencyCode,
-                        Maker = 0.001,
-                        Taker = 0.001
+                        Maker = 0.001m,
+                        Taker = 0.001m
                     }
                 };
             });
@@ -179,7 +179,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.Http
             return await InternalRequest<BinanceCancelOrder, CancelOrder>(true, relativeUrl, HttpMethod.Delete, query);
         }
 
-        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address)
+        public Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, decimal withdrawalFee, decimal volume, string address)
         {
             throw new NotImplementedException();
         }

@@ -7,10 +7,10 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Model
     public class KrakenOrderBookPair
     {
         [JsonProperty(PropertyName = "asks")]
-        public ICollection<ICollection<double>> Asks { get; set; }
+        public ICollection<ICollection<decimal>> Asks { get; set; }
 
         [JsonProperty(PropertyName = "bids")]
-        public ICollection<ICollection<double>> Bids { get; set; }
+        public ICollection<ICollection<decimal>> Bids { get; set; }
     }
 
     public class KrakenOrderBook : Dictionary<string, KrakenOrderBookPair>

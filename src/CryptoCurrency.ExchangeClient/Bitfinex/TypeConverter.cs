@@ -29,9 +29,9 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
                     Exchange = exchange.Name,
                     Epoch = new Epoch(DateTime.UtcNow),
                     SymbolCode = symbolFactory.Get(exchange.DecodeSymbol(t[0].ToString())[0], exchange.DecodeSymbol(t[0].ToString())[1]).Code,
-                    BuyPrice = Convert.ToDouble(t[1]),
-                    SellPrice = Convert.ToDouble(t[3]),
-                    LastPrice = Convert.ToDouble(t[7])
+                    BuyPrice = Convert.ToDecimal(t[1]),
+                    SellPrice = Convert.ToDecimal(t[3]),
+                    LastPrice = Convert.ToDecimal(t[7])
                 }).ToList();
             }
 
@@ -46,9 +46,9 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
                     Exchange = exchange.Name,
                     Epoch = new Epoch(DateTime.UtcNow),
                     SymbolCode = symbolCode,
-                    BuyPrice = Convert.ToDouble(tick[0]),
-                    SellPrice = Convert.ToDouble(tick[2]),
-                    LastPrice = Convert.ToDouble(tick[6])
+                    BuyPrice = Convert.ToDecimal(tick[0]),
+                    SellPrice = Convert.ToDecimal(tick[2]),
+                    LastPrice = Convert.ToDecimal(tick[6])
                 };
             }
 
@@ -69,9 +69,9 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
                         Exchange = exchange.Name,
                         SymbolCode = symbolCode,
                         Epoch = Epoch.FromMilliseconds(Convert.ToInt64(t[1])),
-                        Price = Convert.ToDouble(t[3]),
-                        Volume = Math.Abs(Convert.ToDouble(t[2])),
-                        Side = Convert.ToDouble(t[2]) > 0 ? OrderSideEnum.Buy : OrderSideEnum.Sell,
+                        Price = Convert.ToDecimal(t[3]),
+                        Volume = Math.Abs(Convert.ToDecimal(t[2])),
+                        Side = Convert.ToDecimal(t[2]) > 0 ? OrderSideEnum.Buy : OrderSideEnum.Sell,
                         SourceTradeId = Convert.ToString(t[0])
                     }).OrderBy(t => t.Epoch.TimestampMilliseconds).ThenBy(t => t.SourceTradeId).ToList(),
                     Filter = filter
@@ -91,7 +91,7 @@ namespace CryptoCurrency.ExchangeClient.Bitfinex
                     SymbolCode = symbolCode,
                     StatKey = statKey,
                     Epoch = Epoch.FromMilliseconds(Convert.ToInt64(t[0])),
-                    Value = Convert.ToDouble(t[1])
+                    Value = Convert.ToDecimal(t[1])
                 }).ToList();
             }
 

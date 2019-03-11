@@ -8,6 +8,6 @@ namespace CryptoCurrency.ExchangeClient.Binance.Model
         public string Symbol { get; set; }
 
         [JsonProperty("price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

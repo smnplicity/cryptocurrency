@@ -94,7 +94,7 @@ namespace CryptoCurrency.ExchangeClient.Binance.WebSocket
             throw new NotImplementedException();
         }
 
-        private async void OnMessage(object sender, MessageEventArgs e)
+        private void OnMessage(object sender, MessageEventArgs e)
         {
             var message = JsonConvert.DeserializeObject<BaseMessage>(e.Data);
 

@@ -61,10 +61,18 @@ namespace CryptoCurrency.ExchangeClient.Kraken
 
         public bool Initialized { get; private set; }
 
-        public Task Initialize() => Task.Run(() =>
+        public async Task Initialize()
         {
+            var assetsResponse = await HttpProxy.GetJson<KrakenWrappedResponse<Dictionary<string, KrakenAsset>>>(GetHttpClient().GetFullUrl("0/public/Assets"), null);
+
+            Assets = assetsResponse.Result;
+
+            var assetPairsResponse = await HttpProxy.GetJson<KrakenWrappedResponse<Dictionary<string, KrakenAssetPair>>>(GetHttpClient().GetFullUrl("0/public/AssetPairs"), null);
+
+            AssetPairs = assetPairsResponse.Result;
+
             Initialized = true;
-        });
+        }
 
         public IExchangeHttpClient GetHttpClient()
         {
@@ -77,6 +85,10 @@ namespace CryptoCurrency.ExchangeClient.Kraken
         }
 
         #region Custom functionality
+        public Dictionary<string, KrakenAsset> Assets { get; private set; }
+
+        public Dictionary<string, KrakenAssetPair> AssetPairs { get; private set; }
+
         public CurrencyCodeEnum[] DecodeQuotePair(string pair)
         {
             return new CurrencyCodeEnum[2]
@@ -120,34 +132,6 @@ namespace CryptoCurrency.ExchangeClient.Kraken
         public OrderTypeEnum GetOrderType(string type)
         {
             return type == "market" ? OrderTypeEnum.Market : OrderTypeEnum.Limit;
-        }
-
-        private Dictionary<string, KrakenAsset> Assets { get; set; }
-        
-        public async Task<Dictionary<string, KrakenAsset>> GetAssets()
-        {
-            if (Assets == null)
-            {
-                var response = await HttpProxy.GetJson<KrakenWrappedResponse<Dictionary<string, KrakenAsset>>>(GetHttpClient().GetFullUrl("0/public/Assets"), null);
-
-                Assets = response.Result;
-            }
-
-            return Assets;
-        }
-
-        private Dictionary<string, KrakenAssetPair> AssetPairs { get; set; }
-
-        public async Task<Dictionary<string, KrakenAssetPair>> GetAssetPairs()
-        {
-            if (AssetPairs == null)
-            {
-                var response = await HttpProxy.GetJson<KrakenWrappedResponse<Dictionary<string, KrakenAssetPair>>>(GetHttpClient().GetFullUrl("0/public/AssetPairs"), null);
-
-                AssetPairs = response.Result;
-            }
-
-            return AssetPairs;
         }
         #endregion
     }

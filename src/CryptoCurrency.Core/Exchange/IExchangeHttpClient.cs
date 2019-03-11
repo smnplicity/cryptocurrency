@@ -29,7 +29,7 @@ namespace CryptoCurrency.Core.Exchange
 
         Task<WrappedResponse<ICollection<AccountBalance>>> GetBalance();
 
-        Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, double price, double volume);
+        Task<WrappedResponse<CreateOrder>> CreateOrder(ISymbol symbol, OrderTypeEnum orderType, OrderSideEnum orderSide, decimal price, decimal volume);
 
         Task<WrappedResponse<TradeFee>> GetTradeFee(OrderSideEnum orderSide, ISymbol symbol);
 
@@ -39,7 +39,7 @@ namespace CryptoCurrency.Core.Exchange
 
         Task<WrappedResponse<CancelOrder>> CancelOrder(ISymbol symbol, string[] orderIds);
 
-        Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, double withdrawalFee, double volume, string address);
+        Task<WrappedResponse<WithdrawCrypto>> WithdrawCrypto(CurrencyCodeEnum cryptoCurrencyCode, decimal withdrawalFee, decimal volume, string address);
 
         Task<WrappedResponse<ICollection<Deposit>>> GetDeposits(CurrencyCodeEnum currencyCode, int limit);
 

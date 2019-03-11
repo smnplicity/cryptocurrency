@@ -11,13 +11,13 @@ namespace CryptoCurrency.ExchangeClient.CoinbasePro.Model
         public string Currency { get; set; }
 
         [JsonProperty(PropertyName = "balance")]
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
 
         [JsonProperty(PropertyName = "available")]
-        public double Available { get; set; }
+        public decimal Available { get; set; }
 
         [JsonProperty(PropertyName = "hold")]
-        public double Hold { get; set; }
+        public decimal Hold { get; set; }
 
         [JsonProperty(PropertyName = "profile_id")]
         public string ProfileId { get; set; }

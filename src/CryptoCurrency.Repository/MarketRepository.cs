@@ -449,8 +449,8 @@ namespace CryptoCurrency.Repository
                     $"{t.Price}," +
                     $"{t.Price}," +
                     $"{t.Epoch.TimestampMilliseconds}," +
-                    $"{(t.Side == OrderSideEnum.Buy ? t.Volume.ToString("R") : "NULL")}," +
-                    $"{(t.Side == OrderSideEnum.Sell ? t.Volume.ToString("R") : "NULL")}," +
+                    $"{(t.Side == OrderSideEnum.Buy ? t.Volume.ToString() : "NULL")}," +
+                    $"{(t.Side == OrderSideEnum.Sell ? t.Volume.ToString() : "NULL")}," +
                     $"{t.Volume}," +
                     $"{(t.Side == OrderSideEnum.Buy ? "1" : "NULL")}," +
                     $"{(t.Side == OrderSideEnum.Sell ? "1" : "NULL")}," +

@@ -48,24 +48,24 @@ namespace CryptoCurrency.ExchangeClient.Kraken.Model
         public KrakenOrderDescr Descr { get; set; }
 
         [JsonProperty(PropertyName = "opentm")]
-        public double OpenTm { get; set; }
+        public decimal OpenTm { get; set; }
 
         [JsonProperty(PropertyName = "vol")]
-        public double Volume { get; set; }
+        public decimal Volume { get; set; }
 
         [JsonProperty(PropertyName = "vol_exec")]
-        public double VolumeExec { get; set; }
+        public decimal VolumeExec { get; set; }
 
         [JsonProperty(PropertyName = "cost")]
-        public double Cost { get; set; }
+        public decimal Cost { get; set; }
 
         [JsonProperty(PropertyName = "fee")]
-        public double Fee { get; set; }
+        public decimal Fee { get; set; }
 
         [JsonProperty(PropertyName = "price")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [JsonProperty(PropertyName = "limitprice")]
-        public double LimitPrice { get; set; }
+        public decimal LimitPrice { get; set; }
     }
 }

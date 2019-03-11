@@ -94,8 +94,8 @@ namespace CryptoCurrency.ExchangeClient.Binance
                         Exchange = exchange.Name,
                         SymbolCode = symbol.Code,
                         Epoch = Epoch.FromMilliseconds(Convert.ToInt64(t["T"])),
-                        Price = Convert.ToDouble(t["p"]),
-                        Volume = Convert.ToDouble(t["q"]),
+                        Price = Convert.ToDecimal(t["p"]),
+                        Volume = Convert.ToDecimal(t["q"]),
                         Side = Convert.ToBoolean(t["m"]) ? OrderSideEnum.Sell : OrderSideEnum.Buy,
                         SourceTradeId = Convert.ToString(t["a"])
                     }).ToList(),
