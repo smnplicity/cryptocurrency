@@ -433,6 +433,27 @@
         ONGUSDT = 430,
         HOTBNB = 431,
         HOTUSDT = 432,
-        ZILUSDT = 433
+        ZILUSDT = 433,
+        ADAPAX = 434,
+        ADAUSDC = 435,
+        NEOPAX = 346,
+        NEOUSDC = 347,
+        DASHBNB = 348,
+        DASHUSDT = 349,
+        NANOUSDT = 350,
+        OMGUSDT = 351,
+        OMGBNB = 352,
+        THETAUSDT = 352,
+        IOSTBNB = 353,
+        IOSTUSDT = 354,
+        ZECBNB = 355,
+        ZECUSDT = 356,
+        ZECPAX = 357,
+        ZECTUSD = 358,
+        ZECUSDC = 359,
+        XMRBNB = 360,
+        XMRUSDT = 361,
+        ZRXBNB = 362,
+        ZRXUSDT = 363
     }
 }
